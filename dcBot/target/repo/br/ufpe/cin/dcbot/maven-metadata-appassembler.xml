@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>br.ufpe.cin</groupId>
+  <artifactId>dcbot</artifactId>
+  <versioning>
+    <versions>
+      <version>0.0.1-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20170413152208</lastUpdated>
+  </versioning>
+</metadata>
