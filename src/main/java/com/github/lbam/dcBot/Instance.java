@@ -6,7 +6,6 @@ import com.github.lbam.dcBot.Commands.Callback;
 import com.github.lbam.dcBot.Commands.GameReceiver;
 import com.github.lbam.dcBot.Database.DAO.DaoChampion;
 import com.github.lbam.dcBot.Database.Models.Champion;
-import com.github.lbam.dcBot.Handlers.InstanceHandler;
 import com.github.lbam.dcBot.Handlers.MessageHandler;
 
 import sx.blah.discord.api.events.EventSubscriber;
@@ -47,7 +46,6 @@ public class Instance {
 	}
 	
 	private void showNextChampion() {
-		System.out.println("wtfff");
 		if(progress == maxChampionId) {
 			CompletedGameMessage();
 		}else {
@@ -73,6 +71,7 @@ public class Instance {
 		}else if(guess.equals(actualChampion.getName())) {
 			MessageHandler.sendCorrectAnswer(channel, user);
 			progress++;
+			
 			Runnable r = new Runnable() { 
 				public void run() {
 					database.registerCorrectAnswer(playerId, actualChampion.getId(), actualChampion.getUsedHint());
@@ -102,7 +101,6 @@ public class Instance {
 	public void CompletedGameMessage() {
 		MessageHandler.deleteMessage(showingMessage);
 		MessageHandler.sendMessage("Parabéns," + user.getName() + "!", "Você já completou o jogo, com o total de "+database.getTries(playerId)+" tentativas. Aguarde mais atualizações.", Color.pink, channel);
-		BotMain.Bot.getDispatcher().unregisterListener(InstanceHandler.instances.get(playerId));
-		InstanceHandler.instances.remove(playerId);
+		new Callback(new GameReceiver(user, channel), "sair", channel).execute();
 	}
 }
