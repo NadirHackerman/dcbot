@@ -1,1 +1,1 @@
-worker: sh dcBot/target/bin/Bot
+worker: sh target/bin/Bot
