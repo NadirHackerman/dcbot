@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import com.github.lbam.dcBot.Database.DAO.DaoChampion;
 import com.github.lbam.dcBot.Handlers.EventHandler;
 
 import sx.blah.discord.api.ClientBuilder;

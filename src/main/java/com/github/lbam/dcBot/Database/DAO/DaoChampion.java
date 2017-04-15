@@ -105,11 +105,11 @@ public class DaoChampion {
 		}
 	}
 	
-	public void registerChampion(String idPlayer, int idChampion) {
+	public void registerIncorrectGuess(String idPlayer, int idChampion, boolean usedHint) {
 		connect();
 		try {
 			cmd.executeUpdate("INSERT INTO progresso(idPlayer, idChampion, status, hint) "
-							+ "VALUES("+idPlayer+","+idChampion+","+0+","+0+")");
+							+ "VALUES("+idPlayer+","+idChampion+","+0+","+usedHint+")");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
@@ -117,25 +117,24 @@ public class DaoChampion {
 		}
 	}
 	
-	public void useHint(String idPlayer, int idChampion) {
-		connect();
-		try {
-			cmd.executeUpdate("UPDATE progresso "
-					+ "SET hint = 1 "
-					+ "WHERE idPlayer = " + idPlayer + " AND idChampion = " + idChampion);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}finally {
-			close();
-		}
-	}
+//	public void useHint(String idPlayer, int idChampion) {
+//		connect();
+//		try {
+//			cmd.executeUpdate("UPDATE progresso "
+//					+ "SET hint = 1 "
+//					+ "WHERE idPlayer = " + idPlayer + " AND idChampion = " + idChampion);
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}finally {
+//			close();
+//		}
+//	}
 	
-	public void registerCorrectAnswer(String idPlayer, int idChampion) {
+	public void registerCorrectAnswer(String idPlayer, int idChampion, boolean usedHint) {
 		connect();
 		try {
-			cmd.executeUpdate("UPDATE progresso "
-					+ "SET status = 1 "
-					+ "WHERE idPlayer = "+idPlayer + " AND idChampion = " + idChampion);
+			cmd.executeUpdate("INSERT INTO progresso(idPlayer, idChampion, status, hint) "
+					+ "VALUES("+idPlayer+","+idChampion+","+1+","+usedHint+")");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
@@ -146,9 +145,9 @@ public class DaoChampion {
 	public int getUsedHints(String playerId) {
 		connect();
 		try {
-			ResultSet rs = cmd.executeQuery("SELECT COUNT(*) as total "
+			ResultSet rs = cmd.executeQuery("SELECT COUNT(DISTINCT p.idChampion) as total "
 					+ "FROM progresso p "
-					+ "WHERE p.idPlayer = "+playerId+" AND hint = 1");
+					+ "WHERE p.idPlayer = "+playerId+" AND p.hint = 1");
 			rs.next();
 			return rs.getInt("total");
 		}catch(SQLException e) {
@@ -156,6 +155,22 @@ public class DaoChampion {
 			return 0;
 		}finally {
 			close();
+		}
+	}
+	
+	public void getNoHint() {
+		connect();
+		ResultSet rs;
+		try {
+			rs = cmd.executeQuery("SELECT * c.name "
+					+ "FROM champions c "
+					+ "WHERE c.hint = 'Não existem dicas para esse champion :('");
+			while(rs.next()) {
+				System.out.println(rs.getString("name"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	

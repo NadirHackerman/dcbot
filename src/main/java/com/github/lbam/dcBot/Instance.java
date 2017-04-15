@@ -50,7 +50,7 @@ public class Instance {
 		}
 		
 		int championsLeft = database.getMaxChampionId()+1 - database.getProgress(playerId);
-		//showingMessage = MessageHandler.sendMessage(user.getName(), database.getTries(playerId) + " tentativas para "+database.getProgress(playerId)+" acertos."+"\n"+championsLeft+" campeões restantes.", Color.DARK_GRAY, channel);
+		
 		MessageHandler.editChampionMessage(user, database.getTries(playerId) + " tentativas para "+database.getProgress(playerId)+" acertos."+"\n"+championsLeft+" campeões restantes.", showingMessage);
 		showNextChampion();
 	}
@@ -60,7 +60,6 @@ public class Instance {
 			CompletedGameMessage();
 		}else {
 			actualChampion = database.getRandomChampion(playerId);
-			database.registerChampion(playerId, actualChampion.getId());
 			MessageHandler.editChampionMessage(user, actualChampion.getRepresentation(), showingMessage);
 		}
 	}
@@ -75,7 +74,7 @@ public class Instance {
 		else if(guess.equals("dica")) {
 				if(database.getUsedHints(playerId) < 3) {
 					MessageHandler.threadedDesctrutiveMessage("DICA para o jogador "+user.getName(), actualChampion.getDica(), Color.blue, channel, 8000);
-					database.useHint(playerId, actualChampion.getId());
+					actualChampion.setUsedHint(true);
 				}else {
 					MessageHandler.threadedDesctrutiveMessage("Suas dicas acabaram :(", "Infelizmente, você já utilizou suas 3 dicas.", Color.ORANGE, channel, 5000);
 				}
@@ -84,15 +83,25 @@ public class Instance {
 			progress++;
 			Runnable r = new Runnable() { 
 				public void run() {
-					database.registerCorrectAnswer(playerId, actualChampion.getId());
+					database.registerCorrectAnswer(playerId, actualChampion.getId(), actualChampion.getUsedHint());
 					showNextChampion();
 				}
 			};
+			
 			Thread t = new Thread(r);
 			t.start();
 		}
 		else {
 			MessageHandler.sendWrongAnswer(channel, user);
+			
+			Runnable r = new Runnable() {
+				public void run() { 
+					database.registerIncorrectGuess(playerId, actualChampion.getId(), actualChampion.getUsedHint());
+				}
+			};
+			
+			Thread t = new Thread(r);
+			t.start();
 		}
 		
 		MessageHandler.deleteMessage(message);
@@ -102,5 +111,6 @@ public class Instance {
 		MessageHandler.deleteMessage(showingMessage);
 		MessageHandler.sendMessage("Parabéns," + user.getName() + "!", "Você já completou o jogo, com o total de "+database.getTries(playerId)+" tentativas. Aguarde mais atualizações.", Color.pink, channel);
 		gameReceiver.sair();
+		return;
 	}
 }
