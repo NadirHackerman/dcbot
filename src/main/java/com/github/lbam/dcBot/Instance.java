@@ -25,7 +25,7 @@ public class Instance {
 	
 	Champion actualChampion;
 	DaoChampion database;
-	boolean permissionWarning = false;
+	int progress, maxChampionId;
 	
 	IMessage showingMessage;
 	
@@ -36,20 +36,30 @@ public class Instance {
 		database = new DaoChampion();
 		gr = gameReceiver;
 		
-		if(database.getProgress(playerId) == database.getMaxChampionId()+1) {
+		showingMessage = MessageHandler.sendMessage("Carregando...", "Bem-vindo, invocador! Lembre-se de escrever %dc sair quando terminar!", Color.BLACK, channel);
+		
+		progress = database.getProgress(playerId);
+		maxChampionId = database.getMaxChampionId()+1;
+		
+		if(progress == maxChampionId) {
 			MessageHandler.sendMessage("Parabéns!", "Você já completou o jogo, com o total de "+database.getTries(playerId)+" tentativas", Color.pink, channel);
 			gameReceiver.sair();
 		}
 		
-		int championsLeft = database.getMaxChampionId() - database.getProgress(playerId);
-		showingMessage = MessageHandler.sendMessage(user.getName(), database.getTries(playerId) + " tentativas para "+database.getProgress(playerId)+" acertos."+"\n"+championsLeft+" campeões restantes.", Color.DARK_GRAY, channel);
+		int championsLeft = database.getMaxChampionId()+1 - database.getProgress(playerId);
+		//showingMessage = MessageHandler.sendMessage(user.getName(), database.getTries(playerId) + " tentativas para "+database.getProgress(playerId)+" acertos."+"\n"+championsLeft+" campeões restantes.", Color.DARK_GRAY, channel);
+		MessageHandler.editChampionMessage(user, database.getTries(playerId) + " tentativas para "+database.getProgress(playerId)+" acertos."+"\n"+championsLeft+" campeões restantes.", showingMessage);
 		showNextChampion();
 	}
 	
 	private void showNextChampion() {
-		actualChampion = database.getRandomChampion(playerId);
-		database.registerChampion(playerId, actualChampion.getId());
-		MessageHandler.editChampionMessage(user, actualChampion.getRepresentation(), showingMessage);
+		if(progress == maxChampionId) {
+			CompletedGameMessage();
+		}else {
+			actualChampion = database.getRandomChampion(playerId);
+			database.registerChampion(playerId, actualChampion.getId());
+			MessageHandler.editChampionMessage(user, actualChampion.getRepresentation(), showingMessage);
+		}
 	}
 	
 	@EventSubscriber
@@ -68,24 +78,27 @@ public class Instance {
 				}
 		}else if(guess.equals(actualChampion.getName())) {
 			MessageHandler.sendCorrectAnswer(channel, user);
-			database.registerCorrectAnswer(playerId, actualChampion.getId());
-			showNextChampion();
+			progress++;
+			
+			Runnable r = new Runnable() { 
+				public void run() {
+					database.registerCorrectAnswer(playerId, actualChampion.getId());
+					showNextChampion();
+				}
+			};
+			
+			Thread t = new Thread(r);
+			t.start();
 		}
 		else {
 			MessageHandler.sendWrongAnswer(channel, user);
 		}
 		
-		try {
-			message.delete();
-		} catch (MissingPermissionsException e) {
-			if(permissionWarning == false) {
-				MessageHandler.sendMessage("Atenção!", "O bot não possui permissões necessárias no servidor para excluir os palpites. Habilite-as para assim ter uma melhor experiência.", Color.yellow, channel);
-				permissionWarning = true;
-			}
-		} catch (RateLimitException e) {
-			e.printStackTrace();
-		} catch (DiscordException e) {
-			e.printStackTrace();
-		}
+		MessageHandler.deleteMessage(message);
+	}
+	
+	public void CompletedGameMessage() {
+		MessageHandler.sendMessage("Parabéns!", "Você já completou o jogo, com o total de "+database.getTries(playerId)+" tentativas. Aguarde mais atualizações.", Color.pink, channel);
+		gameReceiver.sair();
 	}
 }

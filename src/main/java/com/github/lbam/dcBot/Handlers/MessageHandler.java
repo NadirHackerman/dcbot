@@ -9,12 +9,17 @@ import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.EmbedBuilder;
 import sx.blah.discord.util.MessageBuilder;
+import sx.blah.discord.util.MissingPermissionsException;
+import sx.blah.discord.util.RateLimitException;
 
 
 
 public class MessageHandler {
+	
+	static boolean permissionWarning = false;
 	
 	public static IMessage sendMessage(String msg, IChannel ch) {
 		try {
@@ -75,6 +80,21 @@ public class MessageHandler {
 	public static void threadedDesctrutiveMessage(String title, String body, Color color, IChannel ch, int delay) {
 		Thread t = new Thread(new SelfDestructiveMessage(title, body, color, ch, delay));
 		t.start();
+	}
+	
+	public static void deleteMessage(IMessage msg) {
+		try {
+			msg.delete();
+		} catch (MissingPermissionsException e) {
+			if(permissionWarning == false) {
+				MessageHandler.sendMessage("Atenção!", "O bot não possui permissões necessárias no servidor para excluir os palpites. Habilite-as para assim ter uma melhor experiência.", Color.yellow, msg.getChannel());
+				permissionWarning = true;
+			}
+		} catch (RateLimitException e) {
+			e.printStackTrace();
+		} catch (DiscordException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
