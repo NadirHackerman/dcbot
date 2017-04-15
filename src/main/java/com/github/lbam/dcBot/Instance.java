@@ -41,9 +41,12 @@ public class Instance {
 		progress = database.getProgress(playerId);
 		maxChampionId = database.getMaxChampionId()+1;
 		
+		if(progress == 0) {
+			MessageHandler.threadedDesctrutiveMessage("Saudações, invocador!", "Seu objetivo é adivinhar qual o personagem do League of Legends o bot quis representar a partir de emojis padrões do Discord.", Color.yellow, channel, 5000);
+		}
+		
 		if(progress == maxChampionId) {
-			MessageHandler.sendMessage("Parabéns!", "Você já completou o jogo, com o total de "+database.getTries(playerId)+" tentativas", Color.pink, channel);
-			gameReceiver.sair();
+			CompletedGameMessage();
 		}
 		
 		int championsLeft = database.getMaxChampionId()+1 - database.getProgress(playerId);
@@ -71,7 +74,7 @@ public class Instance {
 			return;	
 		else if(guess.equals("dica")) {
 				if(database.getUsedHints(playerId) < 3) {
-					MessageHandler.threadedDesctrutiveMessage("DICA", actualChampion.getDica(), Color.blue, channel, 8000);
+					MessageHandler.threadedDesctrutiveMessage("DICA para o jogador "+user.getName(), actualChampion.getDica(), Color.blue, channel, 8000);
 					database.useHint(playerId, actualChampion.getId());
 				}else {
 					MessageHandler.threadedDesctrutiveMessage("Suas dicas acabaram :(", "Infelizmente, você já utilizou suas 3 dicas.", Color.ORANGE, channel, 5000);
@@ -79,14 +82,12 @@ public class Instance {
 		}else if(guess.equals(actualChampion.getName())) {
 			MessageHandler.sendCorrectAnswer(channel, user);
 			progress++;
-			
 			Runnable r = new Runnable() { 
 				public void run() {
 					database.registerCorrectAnswer(playerId, actualChampion.getId());
 					showNextChampion();
 				}
 			};
-			
 			Thread t = new Thread(r);
 			t.start();
 		}
@@ -98,7 +99,8 @@ public class Instance {
 	}
 	
 	public void CompletedGameMessage() {
-		MessageHandler.sendMessage("Parabéns!", "Você já completou o jogo, com o total de "+database.getTries(playerId)+" tentativas. Aguarde mais atualizações.", Color.pink, channel);
+		MessageHandler.deleteMessage(showingMessage);
+		MessageHandler.sendMessage("Parabéns," + user.getName() + "!", "Você já completou o jogo, com o total de "+database.getTries(playerId)+" tentativas. Aguarde mais atualizações.", Color.pink, channel);
 		gameReceiver.sair();
 	}
 }

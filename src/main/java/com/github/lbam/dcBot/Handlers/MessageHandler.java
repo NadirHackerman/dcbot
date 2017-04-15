@@ -70,11 +70,11 @@ public class MessageHandler {
 	}
 	
 	public static void sendWrongAnswer(IChannel ch, IUser user) {
-		threadedDesctrutiveMessage(user.getName(), "Oops! Resposta errada.", Color.red, ch, 3000);
+		threadedDesctrutiveMessage(user.getName(), "Oops! Resposta errada.", Color.red, ch, 2000);
 	}
 	
 	public static void sendCorrectAnswer(IChannel ch, IUser user) {
-		threadedDesctrutiveMessage(user.getName(), "Correto!", Color.green, ch, 3000);
+		threadedDesctrutiveMessage(user.getName(), "Correto!", Color.green, ch, 2000);
 	}
 	
 	public static void threadedDesctrutiveMessage(String title, String body, Color color, IChannel ch, int delay) {
