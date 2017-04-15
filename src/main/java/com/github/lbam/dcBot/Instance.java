@@ -40,7 +40,7 @@ public class Instance {
 		}
 		
 		int championsLeft = maxChampionId - progress;
-		MessageHandler.threadedDesctrutiveMessage(user.getName(), database.getTries(playerId) + " tentativas para "+progress+" acertos."+"\n"+championsLeft+" campeões restantes.", Color.cyan, channel, 6500);
+		MessageHandler.threadedDesctrutiveMessage(user.getName(), database.getTries(playerId) + " tentativas para "+progress+" acertos."+"\n"+championsLeft+" campeões restantes. \n Lembre-se de escrever %dc sair quando terminar!", Color.cyan, channel, 6500);
 		
 		showingMessage = MessageHandler.sendMessage("Descubra o campeão", "Moldando respostas...", Color.black, channel);
 		showNextChampion();

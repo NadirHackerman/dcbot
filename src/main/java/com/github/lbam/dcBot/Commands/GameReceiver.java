@@ -31,7 +31,6 @@ public class GameReceiver {
 			DaoChampion db = new DaoChampion();
 			int playerProgress = db.getProgress(playerId), maxChampion = db.getMaxChampionId()+1;
 			if(playerProgress < maxChampion) {
-				MessageHandler.threadedDesctrutiveMessage("Carregando...", "Bem-vindo, invocador "+user.getName()+"! Lembre-se de escrever %dc sair quando terminar!", Color.BLACK, ch, 3500);
 				Instance instancia = new Instance(user, ch, db, playerProgress, maxChampion);
 				InstanceHandler.instances.put(playerId, instancia);
 				BotMain.Bot.getDispatcher().registerListener(instancia);
