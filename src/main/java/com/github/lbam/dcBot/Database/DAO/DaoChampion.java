@@ -105,7 +105,7 @@ public class DaoChampion {
 		}
 	}
 	
-	public void registerIncorrectGuess(String idPlayer, int idChampion, boolean usedHint) {
+	public void registerIncorrectGuess(String idPlayer, int idChampion, int usedHint) {
 		connect();
 		try {
 			cmd.executeUpdate("INSERT INTO progresso(idPlayer, idChampion, status, hint) "
@@ -117,20 +117,7 @@ public class DaoChampion {
 		}
 	}
 	
-//	public void useHint(String idPlayer, int idChampion) {
-//		connect();
-//		try {
-//			cmd.executeUpdate("UPDATE progresso "
-//					+ "SET hint = 1 "
-//					+ "WHERE idPlayer = " + idPlayer + " AND idChampion = " + idChampion);
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}finally {
-//			close();
-//		}
-//	}
-	
-	public void registerCorrectAnswer(String idPlayer, int idChampion, boolean usedHint) {
+	public void registerCorrectAnswer(String idPlayer, int idChampion, int usedHint) {
 		connect();
 		try {
 			cmd.executeUpdate("INSERT INTO progresso(idPlayer, idChampion, status, hint) "

@@ -74,9 +74,9 @@ public class Instance {
 		else if(guess.equals("dica")) {
 				if(database.getUsedHints(playerId) < 3) {
 					MessageHandler.threadedDesctrutiveMessage("DICA para o jogador "+user.getName(), actualChampion.getDica(), Color.blue, channel, 8000);
-					actualChampion.setUsedHint(true);
+					actualChampion.setUsedHint();
 				}else {
-					MessageHandler.threadedDesctrutiveMessage("Suas dicas acabaram :(", "Infelizmente, você já utilizou suas 3 dicas.", Color.ORANGE, channel, 5000);
+					MessageHandler.threadedDesctrutiveMessage("Jogador "+user.getName()+", suas dicas acabaram :(", "Infelizmente, você já utilizou suas 3 dicas.", Color.ORANGE, channel, 5000);
 				}
 		}else if(guess.equals(actualChampion.getName())) {
 			MessageHandler.sendCorrectAnswer(channel, user);

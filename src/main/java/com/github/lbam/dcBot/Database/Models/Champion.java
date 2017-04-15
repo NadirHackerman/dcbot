@@ -5,14 +5,14 @@ public class Champion {
 	private String name;
 	private String representation;
 	private String dica;
-	private boolean usedHint;
+	private int usedHint;
 	
 	public Champion(int id, String name, String representation, String dica) {
 		this.id = id;
 		this.name = name;
 		this.representation = representation;
 		this.dica = dica;
-		usedHint = false;
+		usedHint = 0;
 	}
 	
 	public int getId() {
@@ -27,7 +27,7 @@ public class Champion {
 	public String getDica() {
 		return dica;
 	}
-	public boolean getUsedHint() {
+	public int getUsedHint() {
 		return usedHint;
 	}
 	public void setId(int id) {
@@ -42,8 +42,8 @@ public class Champion {
 	public void setDica(String dica) {
 		this.dica = dica;
 	}
-	public void setUsedHint(boolean usedHint) {
-		this.usedHint = usedHint;
+	public void setUsedHint() {
+		this.usedHint = 1;
 	}
 
 	
