@@ -1,1 +1,12 @@
-/home/lucas/Área de Trabalho/DescubraOCampeao/dcBot/src/main/java/com/github/lbam/dcBot/dcBotMain.java
+/home/lucas/Área de Trabalho/DescubraOCampeao/src/main/java/com/github/lbam/dcBot/Instance.java
+/home/lucas/Área de Trabalho/DescubraOCampeao/src/main/java/com/github/lbam/dcBot/Database/DAO/DaoChampion.java
+/home/lucas/Área de Trabalho/DescubraOCampeao/src/main/java/com/github/lbam/dcBot/Database/Models/Champion.java
+/home/lucas/Área de Trabalho/DescubraOCampeao/src/main/java/com/github/lbam/dcBot/Handlers/InstanceHandler.java
+/home/lucas/Área de Trabalho/DescubraOCampeao/src/main/java/com/github/lbam/dcBot/Commands/Callback.java
+/home/lucas/Área de Trabalho/DescubraOCampeao/src/main/java/com/github/lbam/dcBot/Runnables/SelfDestructiveMessage.java
+/home/lucas/Área de Trabalho/DescubraOCampeao/src/main/java/com/github/lbam/dcBot/Handlers/MessageHandler.java
+/home/lucas/Área de Trabalho/DescubraOCampeao/src/main/java/com/github/lbam/dcBot/Commands/GameReceiver.java
+/home/lucas/Área de Trabalho/DescubraOCampeao/src/main/java/com/github/lbam/dcBot/Interfaces/Command.java
+/home/lucas/Área de Trabalho/DescubraOCampeao/src/main/java/com/github/lbam/dcBot/BotMain.java
+/home/lucas/Área de Trabalho/DescubraOCampeao/src/main/java/com/github/lbam/dcBot/Database/Factory/ConFactory.java
+/home/lucas/Área de Trabalho/DescubraOCampeao/src/main/java/com/github/lbam/dcBot/Handlers/EventHandler.java

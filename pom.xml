@@ -50,7 +50,7 @@
             <assembleDirectory>target</assembleDirectory>
             <programs>
                 <program>
-                    <mainClass>com.github.lbam.dcBot.dcBotMain</mainClass>
+                    <mainClass>com.github.lbam.dcBot.BotMain</mainClass>
                     <name>Bot</name>
                 </program>
             </programs>
