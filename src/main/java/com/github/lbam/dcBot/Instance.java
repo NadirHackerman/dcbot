@@ -2,9 +2,11 @@ package com.github.lbam.dcBot;
 
 import java.awt.Color;
 
+import com.github.lbam.dcBot.Commands.Callback;
 import com.github.lbam.dcBot.Commands.GameReceiver;
 import com.github.lbam.dcBot.Database.DAO.DaoChampion;
 import com.github.lbam.dcBot.Database.Models.Champion;
+import com.github.lbam.dcBot.Handlers.InstanceHandler;
 import com.github.lbam.dcBot.Handlers.MessageHandler;
 
 import sx.blah.discord.api.events.EventSubscriber;
@@ -12,16 +14,13 @@ import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
+
 
 public class Instance {
 	
 	IUser user;
 	String playerId;
 	IChannel channel;
-	GameReceiver gameReceiver;
 	
 	Champion actualChampion;
 	DaoChampion database;
@@ -29,33 +28,26 @@ public class Instance {
 	
 	IMessage showingMessage;
 	
-	public Instance(IUser user, IChannel ch, GameReceiver gr) {
+	public Instance(IUser user, IChannel ch, DaoChampion db, int progress, int maxChampion) {
 		this.user = user;
+		this.progress = progress;
+		maxChampionId = maxChampion;
 		playerId = user.getID();
 		channel = ch;
-		database = new DaoChampion();
-		gr = gameReceiver;
-		
-		showingMessage = MessageHandler.sendMessage("Carregando...", "Bem-vindo, invocador! Lembre-se de escrever %dc sair quando terminar!", Color.BLACK, channel);
-		
-		progress = database.getProgress(playerId);
-		maxChampionId = database.getMaxChampionId()+1;
-		
+		database = db;
+
 		if(progress == 0) {
 			MessageHandler.threadedDesctrutiveMessage("Saudações, invocador!", "Seu objetivo é adivinhar qual o personagem do League of Legends o bot quis representar a partir de emojis padrões do Discord.", Color.yellow, channel, 5000);
 		}
 		
-		if(progress == maxChampionId) {
-			CompletedGameMessage();
-		}
-		
-		int championsLeft = database.getMaxChampionId()+1 - database.getProgress(playerId);
-		
-		MessageHandler.editChampionMessage(user, database.getTries(playerId) + " tentativas para "+database.getProgress(playerId)+" acertos."+"\n"+championsLeft+" campeões restantes.", showingMessage);
+		int championsLeft = maxChampionId - progress;
+		showingMessage = MessageHandler.sendMessage(user.getName(), database.getTries(playerId) + " tentativas para "+progress+" acertos."+"\n"+championsLeft+" campeões restantes.", Color.cyan, channel);
+	
 		showNextChampion();
 	}
 	
 	private void showNextChampion() {
+		System.out.println("wtfff");
 		if(progress == maxChampionId) {
 			CompletedGameMessage();
 		}else {
@@ -110,7 +102,7 @@ public class Instance {
 	public void CompletedGameMessage() {
 		MessageHandler.deleteMessage(showingMessage);
 		MessageHandler.sendMessage("Parabéns," + user.getName() + "!", "Você já completou o jogo, com o total de "+database.getTries(playerId)+" tentativas. Aguarde mais atualizações.", Color.pink, channel);
-		gameReceiver.sair();
-		return;
+		BotMain.Bot.getDispatcher().unregisterListener(InstanceHandler.instances.get(playerId));
+		InstanceHandler.instances.remove(playerId);
 	}
 }

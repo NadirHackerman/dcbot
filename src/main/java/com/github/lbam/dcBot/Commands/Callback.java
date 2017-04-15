@@ -1,5 +1,6 @@
 package com.github.lbam.dcBot.Commands;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 
@@ -24,9 +25,17 @@ public class Callback implements Command {
 	public void execute() {
 		try {
 			targetMethod.invoke(receiver);
-		} catch (Exception e) {
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
 
 }

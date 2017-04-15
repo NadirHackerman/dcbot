@@ -39,7 +39,7 @@ public class EventHandler {
 			MessageHandler.editChampionMessage(message.getAuthor(), "Hi", x);
 		}
 		if(args[0].equals("%dc") && args.length > 1) {
-			Command cmd = new Callback(new GameReceiver(message), args[1], message.getChannel());
+			Command cmd = new Callback(new GameReceiver(message.getAuthor(),message.getChannel()), args[1], message.getChannel());
 			cmd.execute();
 		} 
 		else
