@@ -28,6 +28,7 @@ public class GameReceiver {
 	//Checa se o player já está em um jogo, caso contrário, inicia um.
 	public void jogar() {
 		if (!gameExists){
+			InstanceHandler.instances.put(playerId, null);
 			DaoChampion db = new DaoChampion();
 			int playerProgress = db.getProgress(playerId), maxChampion = db.getMaxChampionId()+1;
 			if(playerProgress < maxChampion) {
@@ -52,10 +53,22 @@ public class GameReceiver {
 	
 	public void ajuda() {
 		if(!gameExists) {
-			MessageHandler.sendMessage("AJUDA", "Lista de comandos: \n %dc jogar - inicia um jogo\n%dc sair - encerra o jogo\n Para pedir dicas, digite 'dica' enquanto numa partida.", Color.pink, ch);
+			MessageHandler.sendMessage("Saudações, invocador", "Comandos: \n %dc jogar - inicia um jogo. \n %dc sair - encerra um jogo. \n %dc ajuda - reabre esse painel. \n Para pedir dicas, digite 'dica' enquanto em uma sessão. Mas lembre-se: cada jogador poderá utilizar apenas 3 dicas.", Color.yellow, ch);
 		}else {
 			MessageHandler.sendMessage("Antes de pedir ajuda, encerre o jogo atual usando o comando %dc sair", ch);
 		}
+	}
+	
+	public void play(){
+		jogar();
+	}
+	
+	public void quit(){
+		sair();
+	}
+	
+	public void help(){
+		ajuda();
 	}
 	
 	

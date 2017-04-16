@@ -149,11 +149,10 @@ public class DaoChampion {
 		connect();
 		ResultSet rs;
 		try {
-			rs = cmd.executeQuery("SELECT * c.name "
-					+ "FROM champions c "
-					+ "WHERE c.hint = 'Não existem dicas para esse champion :('");
+			rs = cmd.executeQuery("SELECT *"
+					+ "FROM champions c");
 			while(rs.next()) {
-				System.out.println(rs.getString("name"));
+				System.out.println(rs.getString("name")+ " " + rs.getString("hint"));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
