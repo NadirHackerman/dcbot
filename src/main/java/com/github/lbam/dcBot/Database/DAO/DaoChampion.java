@@ -1,9 +1,9 @@
 package com.github.lbam.dcBot.Database.DAO;
 
-import java.io.FileInputStream;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Properties;
+
 
 import com.github.lbam.dcBot.Database.Factory.ConFactory;
 import com.github.lbam.dcBot.Database.Models.Champion;
@@ -13,24 +13,15 @@ import com.mysql.jdbc.Statement;
 public class DaoChampion {
 	
 	private String url, username, password;
-	private Properties prop;
+//	private Properties prop;
 	
 	private Connection con;
 	private Statement cmd;
 	
 	public DaoChampion() {
-		prop = new Properties();
 		username = System.getenv("DBUSER");
 		password = System.getenv("DBPASS");
 		url = System.getenv("DBSERVER");
-//    	try {
-//			prop.load(new FileInputStream("config.properties"));
-//			url = prop.getProperty("database");
-//			username = prop.getProperty("dbuser");
-//			password = prop.getProperty("dbpassword");
-//		} catch(Exception e) {
-//			e.printStackTrace();
-//		}
 	}
 	
 	public Champion getRandomChampion(String id) {
@@ -48,8 +39,7 @@ public class DaoChampion {
 			
 			Champion c = new Champion(
 					rs.getInt("id"), rs.getString("name"), 
-					rs.getString("representation"), 
-					rs.getString("hint"));
+					rs.getString("representation"));
 			
 			return c;
 		} catch (SQLException e) {
@@ -170,8 +160,7 @@ public class DaoChampion {
 			rs = cmd.executeQuery("SELECT * FROM champions c WHERE c.id = "+id);
 			rs.next();
 			return new Champion(rs.getInt("id"), rs.getString("name"), 
-					rs.getString("representation"), 
-					rs.getString("hint"));
+					rs.getString("representation"));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;

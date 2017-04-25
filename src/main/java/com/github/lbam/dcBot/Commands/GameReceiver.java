@@ -5,6 +5,7 @@ import java.awt.Color;
 import com.github.lbam.dcBot.BotMain;
 import com.github.lbam.dcBot.Instance;
 import com.github.lbam.dcBot.Database.DAO.DaoChampion;
+import com.github.lbam.dcBot.Database.DAO.DaoPreferences;
 import com.github.lbam.dcBot.Handlers.InstanceHandler;
 import com.github.lbam.dcBot.Handlers.MessageHandler;
 
@@ -36,11 +37,11 @@ public class GameReceiver {
 				InstanceHandler.instances.put(playerId, instancia);
 				BotMain.Bot.getDispatcher().registerListener(instancia);
 			}else {
-				MessageHandler.sendMessage("Parabéns, " + user.getName() + "!", "Você já completou o jogo, com o total de "+db.getTries(playerId)+" tentativas. Aguarde mais atualizações.", Color.pink, ch);
+				MessageHandler.sendMessage(String.format(DaoPreferences.getTitle("completeGame", DaoPreferences.getLang(ch.getGuild().getID())).getText(), user.getID()), String.format(DaoPreferences.getLocal("completeGame", DaoPreferences.getLang(ch.getGuild().getID())).getText(), db.getTries(playerId)), Color.pink, ch);
 			}
 		}else {
 			MessageHandler.sendIngameError(ch);
-		}
+			}
 	}
 	
 	//Checa se existe um jogo em nome do player, caso exista, exclui.
@@ -53,9 +54,9 @@ public class GameReceiver {
 	
 	public void ajuda() {
 		if(!gameExists) {
-			MessageHandler.sendMessage("Saudações, invocador", "Comandos: \n %dc jogar - inicia um jogo. \n %dc sair - encerra um jogo. \n %dc ajuda - reabre esse painel. \n Para pedir dicas, digite 'dica' enquanto em uma sessão. Mas lembre-se: cada jogador poderá utilizar apenas 3 dicas.", Color.yellow, ch);
+			MessageHandler.showHelpPanel(ch);
 		}else {
-			MessageHandler.sendMessage("Antes de pedir ajuda, encerre o jogo atual usando o comando %dc sair", ch);
+			MessageHandler.sendMessage(DaoPreferences.getLocal("ingameHelp", DaoPreferences.getLang(ch.getGuild().getID())).getText(), ch);
 		}
 	}
 	

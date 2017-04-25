@@ -1,9 +1,7 @@
 package com.github.lbam.dcBot.Database.DAO;
 
-import java.io.FileInputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Properties;
 
 import com.github.lbam.dcBot.Database.Factory.ConFactory;
 import com.github.lbam.dcBot.Database.Models.Localization;
@@ -12,26 +10,10 @@ import com.mysql.jdbc.Statement;
 
 public class DaoPreferences {
 	
-	private String url, username, password;
-	private Properties prop;
+	private static final String url = System.getenv("DBSERVER"), username = System.getenv("DBUSER"), password = System.getenv("DBPASS");
 	
-	private Statement cmd;
-	private Connection con;
-	
-	public DaoPreferences(){
-		prop = new Properties();
-    	try {
-			prop.load(new FileInputStream("config.properties"));
-			url = prop.getProperty("database");
-			username = prop.getProperty("dbuser");
-			password = prop.getProperty("dbpassword");
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public boolean existeRegistro(String serverId){
-		connect();
+	public static boolean existeRegistro(String serverId){
+		Statement cmd = connect();
 		try {
 			ResultSet rs = cmd.executeQuery("SELECT COUNT(*) as total FROM preferences WHERE guildId = " + serverId);
 			rs.next();
@@ -44,12 +26,12 @@ public class DaoPreferences {
 			e.printStackTrace();
 			return false;
 		}finally{
-			close();
+			close(cmd);
 		}
 	}
 	
-	public void createPreferences(String guild, String lang){
-		connect();
+	public static void createPreferences(String guild, String lang){
+		Statement cmd = connect();
 		try {
 			cmd.executeUpdate("INSERT INTO preferences(guildId,lang)"
 					+ "VALUES("+"'"+guild+"'"+","+"'"+lang+"'"+")");
@@ -58,10 +40,24 @@ public class DaoPreferences {
 		}
 	}
 	
-	public Localization getText(String hash, String lang){
-		connect();
+	public static String getLang(String guild){
+		Statement cmd = connect();
 		try {
-			ResultSet rs = cmd.executeQuery("SELECT * FROM localization l WHERE l.hash = '"+hash+"'"+" AND l.lang = '"+lang+"'");
+			ResultSet rs = cmd.executeQuery("SELECT * FROM preferences p WHERE p.guildId = '"+guild+"'");
+			rs.next();
+			return rs.getString("lang");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}finally{
+			close(cmd);
+		}
+	}
+	
+	public static Localization getLocal(String hash, String lang){
+		Statement cmd = connect();
+		try {
+			ResultSet rs = cmd.executeQuery("SELECT * FROM localization l WHERE l.hash = '"+hash+"Text'"+" AND l.lang = '"+lang+"'");
 			rs.next();
 			Localization locale = new Localization(rs.getString("lang"),rs.getString("hash"),rs.getString("text"));
 			return locale;
@@ -69,12 +65,27 @@ public class DaoPreferences {
 			e.printStackTrace();
 			return null;
 		}finally{
-			close();
+			close(cmd);
 		}
 	}
 	
-	public void insertChampionsHint(){
-		connect();
+	public static Localization getTitle(String hash, String lang){
+		Statement cmd = connect();
+		try {
+			ResultSet rs = cmd.executeQuery("SELECT * FROM localization l WHERE l.hash = '"+hash+"Title'"+" AND l.lang = '"+lang+"'");
+			rs.next();
+			Localization locale = new Localization(rs.getString("lang"),rs.getString("hash"),rs.getString("text"));
+			return locale;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}finally{
+			close(cmd);
+		}
+	}
+	
+	public static void insertChampionsHint(){
+		Statement cmd = connect();
 		try {
 			cmd.executeUpdate("INSERT INTO localization(lang , hash, text) SELECT 'br', c.name, c.hint FROM champions c");
 		} catch (SQLException e) {
@@ -83,18 +94,20 @@ public class DaoPreferences {
 		}
 	}
 	
-	public void connect(){
+	public static Statement connect(){
 		try {
-			con = (Connection) ConFactory.getConnection(url, username, password);
-			cmd = (Statement) con.createStatement();
+			Connection con = (Connection) ConFactory.getConnection(url, username, password);
+			Statement cmd = (Statement) con.createStatement();
+			return cmd;
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
 	}
 	
-	public void close(){
+	static public void close(Statement cmd){
 		try {
-			con.close();
+			cmd.getConnection().close();
 			cmd.close();
 		} catch (SQLException e) {
 			e.printStackTrace();

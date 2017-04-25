@@ -5,6 +5,7 @@ import java.awt.Color;
 import com.github.lbam.dcBot.Commands.Callback;
 import com.github.lbam.dcBot.Commands.GameReceiver;
 import com.github.lbam.dcBot.Database.DAO.DaoChampion;
+import com.github.lbam.dcBot.Database.DAO.DaoPreferences;
 import com.github.lbam.dcBot.Database.Models.Champion;
 import com.github.lbam.dcBot.Handlers.MessageHandler;
 
@@ -26,6 +27,7 @@ public class Instance {
 	int progress, maxChampionId;
 	
 	IMessage showingMessage;
+	String lang;
 	
 	public Instance(IUser user, IChannel ch, DaoChampion db, int progress, int maxChampion) {
 		this.user = user;
@@ -34,13 +36,18 @@ public class Instance {
 		playerId = user.getID();
 		channel = ch;
 		database = db;
-
+		
+		lang = DaoPreferences.getLang(ch.getGuild().getID());
+	
 		if(progress == 0) {
-			MessageHandler.threadedDesctrutiveMessage("Saudações, invocador!", "Seu objetivo é adivinhar qual o personagem do League of Legends o bot quis representar a partir de emojis padrões do Discord.", Color.yellow, channel, 5000);
+			String welcomeTitle = DaoPreferences.getLocal("welcome", lang).getText();
+			String welcomeText = DaoPreferences.getLocal("welcome", lang).getText();
+			MessageHandler.threadedDesctrutiveMessage(welcomeTitle, welcomeText, Color.yellow, channel, 5000);
 		}
 		
 		int championsLeft = maxChampionId - progress;
-		MessageHandler.threadedDesctrutiveMessage(user.getName(), database.getTries(playerId) + " tentativas para "+progress+" acertos."+"\n"+championsLeft+" campeões restantes. \n Lembre-se de escrever %dc sair quando terminar!", Color.cyan, channel, 6500);
+		String startText = String.format(DaoPreferences.getLocal("start", lang).getText(), database.getTries(playerId), progress, championsLeft);
+		MessageHandler.threadedDesctrutiveMessage(user.getName(), startText, Color.cyan, channel, 6500);
 		
 		showingMessage = MessageHandler.sendMessage("Descubra o campeão", "Moldando respostas...", Color.black, channel);
 		showNextChampion();
@@ -64,13 +71,16 @@ public class Instance {
 			return;	
 		else if(guess.equals("dica")) {
 				if(database.getUsedHints(playerId) < 3) {
-					MessageHandler.threadedDesctrutiveMessage("DICA para o jogador "+user.getName(), actualChampion.getDica(), Color.blue, channel, 8000);
+					String hintTitle = String.format(DaoPreferences.getTitle("hint", lang).getText(),user.getName());
+					String hintText = DaoPreferences.getLocal(actualChampion.getName(), lang).getText();
+					MessageHandler.threadedDesctrutiveMessage(hintTitle, hintText, Color.blue, channel, 8000);
 					actualChampion.setUsedHint();
 				}else {
-					MessageHandler.threadedDesctrutiveMessage("Jogador "+user.getName()+", suas dicas acabaram :(", "Infelizmente, você já utilizou suas 3 dicas.", Color.ORANGE, channel, 5000);
+					String noHintText = DaoPreferences.getLocal("noHint", lang).getText();
+					MessageHandler.threadedDesctrutiveMessage("@"+user.getName(), noHintText, Color.ORANGE, channel, 5000);
 				}
 		}else if(guess.equals(actualChampion.getName())) {
-			MessageHandler.sendCorrectAnswer(channel, user);
+			MessageHandler.sendCorrectAnswer(channel, user, lang);
 			progress++;
 			
 			Runnable r = new Runnable() { 
@@ -84,7 +94,7 @@ public class Instance {
 			t.start();
 		}
 		else {
-			MessageHandler.sendWrongAnswer(channel, user);
+			MessageHandler.sendWrongAnswer(channel, user, lang);
 			
 			Runnable r = new Runnable() {
 				public void run() { 
@@ -101,7 +111,9 @@ public class Instance {
 	
 	public void CompletedGameMessage() {
 		MessageHandler.deleteMessage(showingMessage);
-		MessageHandler.sendMessage("Parabéns," + user.getName() + "!", "Você já completou o jogo, com o total de "+database.getTries(playerId)+" tentativas. Aguarde mais atualizações.", Color.pink, channel);
+		String completeGameTitle = String.format(DaoPreferences.getTitle("completeGame", lang).getText(), user.getName());
+		String completeGameText = String.format(DaoPreferences.getLocal("completeGame", lang).getText(), database.getTries(playerId));
+		MessageHandler.sendMessage(completeGameTitle, completeGameText, Color.pink, channel);
 		new Callback(new GameReceiver(user, channel), "sair", channel).execute();
 	}
 }

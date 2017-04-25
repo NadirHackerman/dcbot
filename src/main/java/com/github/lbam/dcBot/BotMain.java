@@ -1,8 +1,5 @@
 package com.github.lbam.dcBot;
-
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Properties;
 
 import com.github.lbam.dcBot.Handlers.EventHandler;
 
@@ -19,10 +16,8 @@ public class BotMain{
 	public static IDiscordClient Bot;
 	
     public static void main(String[] args) throws IOException, DiscordException{
-//    	Properties prop = new Properties();
-//    	prop.load(new FileInputStream("config.properties"));
+
     	Bot = getClient(System.getenv("TOKEN"));
-//    	Bot = getClient(prop.getProperty("token"));
     	Bot.getDispatcher().registerListener(new EventHandler());
     }
     

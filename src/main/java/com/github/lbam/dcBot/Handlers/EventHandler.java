@@ -1,16 +1,13 @@
 package com.github.lbam.dcBot.Handlers;
 
-import java.awt.Color;
 
 import com.github.lbam.dcBot.BotMain;
 import com.github.lbam.dcBot.Commands.Callback;
 import com.github.lbam.dcBot.Commands.GameReceiver;
-import com.github.lbam.dcBot.Database.DAO.DaoChampion;
 import com.github.lbam.dcBot.Database.DAO.DaoPreferences;
-import com.github.lbam.dcBot.Database.Models.Champion;
 import com.github.lbam.dcBot.Interfaces.Command;
 
-import sx.blah.discord.api.ClientBuilder;
+
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.GuildCreateEvent;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
@@ -34,22 +31,21 @@ public class EventHandler {
 		IGuild server = event.getGuild();
 		String serverRegion = server.getRegion().getName();
 		
-		for(IChannel ch : server.getChannels()) {
-			MessageHandler.sendMessage("Saudações, invocador", "Comandos: \n %dc jogar - inicia um jogo. \n %dc sair - encerra um jogo. \n %dc ajuda - reabre esse painel. \n Para pedir dicas, digite 'dica' enquanto em uma sessão. Mas lembre-se: cada jogador poderá utilizar apenas 3 dicas.", Color.yellow, ch);
-		}
-		
-		DaoPreferences database = new DaoPreferences();
-		if(!database.existeRegistro(server.getID())){
+		if(!DaoPreferences.existeRegistro(server.getID())){
 			if(serverRegion.equals("Brazil")){
-				database.createPreferences(server.getID(), "br");
+				DaoPreferences.createPreferences(server.getID(), "br");
 			}else{
-				database.createPreferences(server.getID(), "us");
+				DaoPreferences.createPreferences(server.getID(), "us");
 				try {
 					BotMain.Bot.changeUsername("Who is that champion?");
 				} catch (Exception e){
 					System.out.println("Não pude mudar o nick :(");
 				}
 			}
+		}
+		
+		for(IChannel ch : server.getChannels()) {
+			MessageHandler.showHelpPanel(ch);
 		}
 		
 	}
