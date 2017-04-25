@@ -53,13 +53,13 @@ public class MessageHandler {
 	}
 	
 	public static void sendInvalidCommand(IChannel ch) {
-		String lang = DaoPreferences.getLang(ch.getGuild().getID());
-		sendMessage(DaoPreferences.getTitle("invalidCommand", lang).getText(), DaoPreferences.getLocal("invalidCommand", lang).getText(), Color.red, ch);
+		String lang = DaoPreferences.db.getLang(ch.getGuild().getID());
+		sendMessage(DaoPreferences.db.getTitle("invalidCommand", lang).getText(), DaoPreferences.db.getLocal("invalidCommand", lang).getText(), Color.red, ch);
 	}
 	
 	public static void sendIngameError(IChannel ch) {
-		String lang = DaoPreferences.getLang(ch.getGuild().getID());
-		sendMessage(DaoPreferences.getTitle("ingameError", lang).getText(), DaoPreferences.getLocal("ingameError", lang).getText(), Color.red, ch);
+		String lang = DaoPreferences.db.getLang(ch.getGuild().getID());
+		sendMessage(DaoPreferences.db.getTitle("ingameError", lang).getText(), DaoPreferences.db.getLocal("ingameError", lang).getText(), Color.red, ch);
 	}
 	
 	public static void editChampionMessage(IUser player, String representation, IMessage msg) {
@@ -72,11 +72,11 @@ public class MessageHandler {
 	}
 	
 	public static void sendWrongAnswer(IChannel ch, IUser user, String lang) {
-		threadedDesctrutiveMessage(user.getName(), DaoPreferences.getLocal("incorrect", lang).getText(), Color.red, ch, 2000);
+		threadedDesctrutiveMessage(user.getName(), DaoPreferences.db.getLocal("incorrect", lang).getText(), Color.red, ch, 2000);
 	}
 	
 	public static void sendCorrectAnswer(IChannel ch, IUser user, String lang) {
-		threadedDesctrutiveMessage(user.getName(), DaoPreferences.getLocal("correct",lang).getText(), Color.green, ch, 2000);
+		threadedDesctrutiveMessage(user.getName(), DaoPreferences.db.getLocal("correct",lang).getText(), Color.green, ch, 2000);
 	}
 	
 	public static void threadedDesctrutiveMessage(String title, String body, Color color, IChannel ch, int delay) {
@@ -85,9 +85,9 @@ public class MessageHandler {
 	}
 	
 	public static void showHelpPanel(IChannel ch){
-		String lang = DaoPreferences.getLang(ch.getGuild().getID());
-		String title = DaoPreferences.getTitle("gWelcome", lang).getText();
-		String text = DaoPreferences.getLocal("gWelcome", lang).getText();
+		String lang = DaoPreferences.db.getLang(ch.getGuild().getID());
+		String title = DaoPreferences.db.getTitle("gWelcome", lang).getText();
+		String text = DaoPreferences.db.getLocal("gWelcome", lang).getText();
 		MessageHandler.sendMessage(title, text, Color.yellow, ch);
 	}
 	
@@ -96,7 +96,7 @@ public class MessageHandler {
 			msg.delete();
 		} catch (MissingPermissionsException e) {
 			if(permissionWarning == false) {
-				MessageHandler.sendMessage("!!!!!!", DaoPreferences.getLocal("permission", DaoPreferences.getLang(msg.getGuild().getID())).getText(), Color.yellow, msg.getChannel());
+				MessageHandler.sendMessage("!!!!!!", DaoPreferences.db.getLocal("permission", DaoPreferences.db.getLang(msg.getGuild().getID())).getText(), Color.yellow, msg.getChannel());
 				permissionWarning = true;
 			}
 		} catch (RateLimitException e) {

@@ -1,8 +1,8 @@
 package com.github.lbam.dcBot.Database.DAO;
 
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import com.github.lbam.dcBot.Database.Factory.ConFactory;
 import com.github.lbam.dcBot.Database.Models.Localization;
 import com.mysql.jdbc.Connection;
@@ -10,10 +10,21 @@ import com.mysql.jdbc.Statement;
 
 public class DaoPreferences {
 	
-	private static final String url = System.getenv("DBSERVER"), username = System.getenv("DBUSER"), password = System.getenv("DBPASS");
+	public static DaoPreferences db;
+	private String url, username, password;
 	
-	public static boolean existeRegistro(String serverId){
-		Statement cmd = connect();
+	private Statement cmd;
+	private Connection con;
+	
+	public DaoPreferences(){
+		username = System.getenv("DBUSER");
+		password = System.getenv("DBPASS");
+		url = System.getenv("DBSERVER");
+		db = this;
+	}
+	
+	public boolean existeRegistro(String serverId){
+		connect();
 		try {
 			ResultSet rs = cmd.executeQuery("SELECT COUNT(*) as total FROM preferences WHERE guildId = " + serverId);
 			rs.next();
@@ -26,12 +37,12 @@ public class DaoPreferences {
 			e.printStackTrace();
 			return false;
 		}finally{
-			close(cmd);
+			close();
 		}
 	}
 	
-	public static void createPreferences(String guild, String lang){
-		Statement cmd = connect();
+	public void createPreferences(String guild, String lang){
+		connect();
 		try {
 			cmd.executeUpdate("INSERT INTO preferences(guildId,lang)"
 					+ "VALUES("+"'"+guild+"'"+","+"'"+lang+"'"+")");
@@ -40,8 +51,8 @@ public class DaoPreferences {
 		}
 	}
 	
-	public static String getLang(String guild){
-		Statement cmd = connect();
+	public String getLang(String guild){
+		connect();
 		try {
 			ResultSet rs = cmd.executeQuery("SELECT * FROM preferences p WHERE p.guildId = '"+guild+"'");
 			rs.next();
@@ -50,12 +61,12 @@ public class DaoPreferences {
 			e.printStackTrace();
 			return null;
 		}finally{
-			close(cmd);
+			close();
 		}
 	}
 	
-	public static Localization getLocal(String hash, String lang){
-		Statement cmd = connect();
+	public Localization getLocal(String hash, String lang){
+		connect();
 		try {
 			ResultSet rs = cmd.executeQuery("SELECT * FROM localization l WHERE l.hash = '"+hash+"Text'"+" AND l.lang = '"+lang+"'");
 			rs.next();
@@ -65,12 +76,12 @@ public class DaoPreferences {
 			e.printStackTrace();
 			return null;
 		}finally{
-			close(cmd);
+			close();
 		}
 	}
 	
-	public static Localization getTitle(String hash, String lang){
-		Statement cmd = connect();
+	public Localization getTitle(String hash, String lang){
+		connect();
 		try {
 			ResultSet rs = cmd.executeQuery("SELECT * FROM localization l WHERE l.hash = '"+hash+"Title'"+" AND l.lang = '"+lang+"'");
 			rs.next();
@@ -80,12 +91,12 @@ public class DaoPreferences {
 			e.printStackTrace();
 			return null;
 		}finally{
-			close(cmd);
+			close();
 		}
 	}
 	
-	public static void insertChampionsHint(){
-		Statement cmd = connect();
+	public void insertChampionsHint(){
+		connect();
 		try {
 			cmd.executeUpdate("INSERT INTO localization(lang , hash, text) SELECT 'br', c.name, c.hint FROM champions c");
 		} catch (SQLException e) {
@@ -94,20 +105,18 @@ public class DaoPreferences {
 		}
 	}
 	
-	public static Statement connect(){
+	public void connect(){
 		try {
-			Connection con = (Connection) ConFactory.getConnection(url, username, password);
-			Statement cmd = (Statement) con.createStatement();
-			return cmd;
+			con = (Connection) ConFactory.getConnection(url, username, password);
+			cmd = (Statement) con.createStatement();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
 		}
 	}
 	
-	static public void close(Statement cmd){
+	public void close(){
 		try {
-			cmd.getConnection().close();
+			con.close();
 			cmd.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
