@@ -39,7 +39,7 @@ public class Instance {
 		lang = DaoPreferences.getLang(ch.getGuild().getID());
 	
 		if(progress == 0) {
-			String welcomeTitle = DaoPreferences.getLocal("welcome", lang).getText();
+			String welcomeTitle = DaoPreferences.getTitle("welcome", lang).getText();
 			String welcomeText = DaoPreferences.getLocal("welcome", lang).getText();
 			MessageHandler.threadedDesctrutiveMessage(welcomeTitle, welcomeText, Color.yellow, channel, 5000);
 		}
