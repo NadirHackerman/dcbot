@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 import com.github.lbam.dcBot.Database.Factory.ConFactory;
+import com.github.lbam.dcBot.Database.Models.Localization;
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.Statement;
 
@@ -53,6 +54,31 @@ public class DaoPreferences {
 			cmd.executeUpdate("INSERT INTO preferences(guildId,lang)"
 					+ "VALUES("+"'"+guild+"'"+","+"'"+lang+"'"+")");
 		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public Localization getText(String hash, String lang){
+		connect();
+		try {
+			ResultSet rs = cmd.executeQuery("SELECT * FROM localization l WHERE l.hash = '"+hash+"'"+" AND l.lang = '"+lang+"'");
+			rs.next();
+			Localization locale = new Localization(rs.getString("lang"),rs.getString("hash"),rs.getString("text"));
+			return locale;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}finally{
+			close();
+		}
+	}
+	
+	public void insertChampionsHint(){
+		connect();
+		try {
+			cmd.executeUpdate("INSERT INTO localization(lang , hash, text) SELECT 'br', c.name, c.hint FROM champions c");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

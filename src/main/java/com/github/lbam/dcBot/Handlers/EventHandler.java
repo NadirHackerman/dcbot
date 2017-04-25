@@ -5,9 +5,12 @@ import java.awt.Color;
 import com.github.lbam.dcBot.BotMain;
 import com.github.lbam.dcBot.Commands.Callback;
 import com.github.lbam.dcBot.Commands.GameReceiver;
+import com.github.lbam.dcBot.Database.DAO.DaoChampion;
 import com.github.lbam.dcBot.Database.DAO.DaoPreferences;
+import com.github.lbam.dcBot.Database.Models.Champion;
 import com.github.lbam.dcBot.Interfaces.Command;
 
+import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.GuildCreateEvent;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
@@ -15,6 +18,9 @@ import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.util.DiscordException;
+import sx.blah.discord.util.MissingPermissionsException;
+import sx.blah.discord.util.RateLimitException;
 
 public class EventHandler {
 	
@@ -39,7 +45,7 @@ public class EventHandler {
 			}else{
 				database.createPreferences(server.getID(), "us");
 				try {
-					BotMain.Bot.changeUsername("Who is that champ?");
+					BotMain.Bot.changeUsername("Who is that champion?");
 				} catch (Exception e){
 					System.out.println("Não pude mudar o nick :(");
 				}
@@ -48,7 +54,7 @@ public class EventHandler {
 		
 	}
 	@EventSubscriber
-	public void onMessageEvent(MessageReceivedEvent event){
+	public void onMessageEvent(MessageReceivedEvent event) throws DiscordException, RateLimitException, MissingPermissionsException{
 		IMessage message = event.getMessage();
 		String[] args = message.getContent().split(" ");
 		

@@ -20,14 +20,17 @@ public class DaoChampion {
 	
 	public DaoChampion() {
 		prop = new Properties();
-    	try {
-			prop.load(new FileInputStream("config.properties"));
-			url = prop.getProperty("database");
-			username = prop.getProperty("dbuser");
-			password = prop.getProperty("dbpassword");
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+		username = System.getenv("DBUSER");
+		password = System.getenv("DBPASS");
+		url = System.getenv("DBSERVER");
+//    	try {
+//			prop.load(new FileInputStream("config.properties"));
+//			url = prop.getProperty("database");
+//			username = prop.getProperty("dbuser");
+//			password = prop.getProperty("dbpassword");
+//		} catch(Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 	
 	public Champion getRandomChampion(String id) {
@@ -158,6 +161,25 @@ public class DaoChampion {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public Champion getChampionById(int id){
+		connect();
+		ResultSet rs;
+		try {
+			rs = cmd.executeQuery("SELECT * FROM champions c WHERE c.id = "+id);
+			rs.next();
+			return new Champion(rs.getInt("id"), rs.getString("name"), 
+					rs.getString("representation"), 
+					rs.getString("hint"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		finally{
+			close();
+		}
+		
 	}
 	
 	public void connect() {
