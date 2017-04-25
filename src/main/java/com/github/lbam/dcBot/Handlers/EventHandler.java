@@ -57,7 +57,7 @@ public class EventHandler {
 		if(message.getAuthor().isBot())
 			return;
 
-		if(args[0].equals("%dc") && args.length > 1) {
+		if(args[0].equals(":dc") && args.length > 1) {
 			Command cmd = new Callback(new GameReceiver(message.getAuthor(),message.getChannel()), args[1], message.getChannel());
 			cmd.execute();
 		} 
