@@ -5,6 +5,7 @@ import java.awt.Color;
 import com.github.lbam.dcBot.BotMain;
 import com.github.lbam.dcBot.Instance;
 import com.github.lbam.dcBot.Database.DAO.DaoChampion;
+import com.github.lbam.dcBot.Database.DAO.DaoPreferences;
 import com.github.lbam.dcBot.Handlers.InstanceHandler;
 import com.github.lbam.dcBot.Handlers.MessageHandler;
 
@@ -15,6 +16,7 @@ public class GameReceiver {
 	
 	IUser user;
 	String playerId;
+	String guildLang;
 	IChannel ch;
 	boolean gameExists;
 	
@@ -23,6 +25,7 @@ public class GameReceiver {
 		this.ch = ch;
 		playerId = user.getID();
 		gameExists = InstanceHandler.instances.containsKey(playerId);
+		guildLang = DaoPreferences.getLang(ch.getGuild().getID());
 	}
 	
 	//Checa se o player já está em um jogo, caso contrário, inicia um.
@@ -36,7 +39,7 @@ public class GameReceiver {
 				InstanceHandler.instances.put(playerId, instancia);
 				BotMain.Bot.getDispatcher().registerListener(instancia);
 			}else {
-				MessageHandler.sendMessage(String.format(BotMain.preferences.getTitle("completeGame", BotMain.preferences.getLang(ch.getGuild().getID())).getText(), user.getID()), String.format(BotMain.preferences.getLocal("completeGame", BotMain.preferences.getLang(ch.getGuild().getID())).getText(), db.getTries(playerId)), Color.pink, ch);
+				MessageHandler.sendMessage(String.format(DaoPreferences.getTitle("completeGame", DaoPreferences.getLang(ch.getGuild().getID())).getText(), user.getID()), String.format(DaoPreferences.getLocal("completeGame", DaoPreferences.getLang(ch.getGuild().getID())).getText(), db.getTries(playerId)), Color.pink, ch);
 			}
 		}else {
 			MessageHandler.sendIngameError(ch);
@@ -55,7 +58,8 @@ public class GameReceiver {
 		if(!gameExists) {
 			MessageHandler.showHelpPanel(ch);
 		}else {
-			MessageHandler.sendMessage(BotMain.preferences.getLocal("ingameHelp", BotMain.preferences.getLang(ch.getGuild().getID())).getText(), ch);
+			String lang = DaoPreferences.getLang(ch.getGuild().getID());
+			MessageHandler.sendMessage(DaoPreferences.getLocal("ingameHelp", lang).getText(), ch);
 		}
 	}
 	

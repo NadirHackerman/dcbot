@@ -19,8 +19,6 @@ import sx.blah.discord.util.RateLimitException;
 
 public class MessageHandler {
 	
-	static boolean permissionWarning = false;
-	
 	public static IMessage sendMessage(String msg, IChannel ch) {
 		try {
 			return ch.sendMessage(msg);
@@ -53,13 +51,13 @@ public class MessageHandler {
 	}
 	
 	public static void sendInvalidCommand(IChannel ch) {
-		String lang = BotMain.preferences.getLang(ch.getGuild().getID());
-		sendMessage(BotMain.preferences.getTitle("invalidCommand", lang).getText(), BotMain.preferences.getLocal("invalidCommand", lang).getText(), Color.red, ch);
+		String lang = DaoPreferences.getLang(ch.getGuild().getID());
+		sendMessage(DaoPreferences.getTitle("invalidCommand", lang).getText(), DaoPreferences.getLocal("invalidCommand", lang).getText(), Color.red, ch);
 	}
 	
 	public static void sendIngameError(IChannel ch) {
-		String lang = BotMain.preferences.getLang(ch.getGuild().getID());
-		sendMessage(BotMain.preferences.getTitle("ingameError", lang).getText(), BotMain.preferences.getLocal("ingameError", lang).getText(), Color.red, ch);
+		String lang = DaoPreferences.getLang(ch.getGuild().getID());
+		sendMessage(DaoPreferences.getTitle("ingameError", lang).getText(), DaoPreferences.getLocal("ingameError", lang).getText(), Color.red, ch);
 	}
 	
 	public static void editChampionMessage(IUser player, String representation, IMessage msg) {
@@ -72,11 +70,11 @@ public class MessageHandler {
 	}
 	
 	public static void sendWrongAnswer(IChannel ch, IUser user, String lang) {
-		threadedDesctrutiveMessage(user.getName(), BotMain.preferences.getLocal("incorrect", lang).getText(), Color.red, ch, 2000);
+		threadedDesctrutiveMessage(user.getName(), DaoPreferences.getLocal("incorrect", lang).getText(), Color.red, ch, 2000);
 	}
 	
 	public static void sendCorrectAnswer(IChannel ch, IUser user, String lang) {
-		threadedDesctrutiveMessage(user.getName(), BotMain.preferences.getLocal("correct",lang).getText(), Color.green, ch, 2000);
+		threadedDesctrutiveMessage(user.getName(), DaoPreferences.getLocal("correct",lang).getText(), Color.green, ch, 2000);
 	}
 	
 	public static void threadedDesctrutiveMessage(String title, String body, Color color, IChannel ch, int delay) {
@@ -85,25 +83,25 @@ public class MessageHandler {
 	}
 	
 	public static void showHelpPanel(IChannel ch){
-		String lang = BotMain.preferences.getLang(ch.getGuild().getID());
-		String title = BotMain.preferences.getTitle("gWelcome", lang).getText();
-		String text = BotMain.preferences.getLocal("gWelcome", lang).getText();
+		String lang = DaoPreferences.getLang(ch.getGuild().getID());
+		String title = DaoPreferences.getTitle("gWelcome", lang).getText();
+		String text = DaoPreferences.getLocal("gWelcome", lang).getText();
 		MessageHandler.sendMessage(title, text, Color.yellow, ch);
 	}
 	
-	public static void deleteMessage(IMessage msg) {
+	public static void deleteMessage(IMessage msg) throws MissingPermissionsException {
 		try {
 			msg.delete();
-		} catch (MissingPermissionsException e) {
-			if(permissionWarning == false) {
-				MessageHandler.sendMessage("!!!!!!", BotMain.preferences.getLocal("permission", BotMain.preferences.getLang(msg.getGuild().getID())).getText(), Color.yellow, msg.getChannel());
-				permissionWarning = true;
-			}
 		} catch (RateLimitException e) {
 			e.printStackTrace();
 		} catch (DiscordException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void noPermissions(IChannel ch){
+		String lang = DaoPreferences.getLang(ch.getGuild().getID());
+		MessageHandler.sendMessage("!!!!!!", DaoPreferences.getLocal("permission", lang).getText(), Color.yellow, ch);
 	}
 	
 	

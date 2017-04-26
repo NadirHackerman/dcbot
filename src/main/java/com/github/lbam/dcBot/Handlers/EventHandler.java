@@ -31,11 +31,11 @@ public class EventHandler {
 		IGuild server = event.getGuild();
 		String serverRegion = server.getRegion().getName();
 		
-		if(!BotMain.preferences.existeRegistro(server.getID())){
+		if(!DaoPreferences.existeRegistro(server.getID())){
 			if(serverRegion.equals("Brazil")){
-				BotMain.preferences.createPreferences(server.getID(), "br");
+				DaoPreferences.createPreferences(server.getID(), "br");
 			}else{
-				BotMain.preferences.createPreferences(server.getID(), "us");
+				DaoPreferences.createPreferences(server.getID(), "us");
 				try {
 					BotMain.Bot.changeUsername("Who is that champion?");
 				} catch (Exception e){

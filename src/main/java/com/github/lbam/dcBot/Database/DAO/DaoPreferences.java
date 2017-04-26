@@ -2,26 +2,19 @@ package com.github.lbam.dcBot.Database.DAO;
 
 
 import java.sql.ResultSet;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
+
 import com.github.lbam.dcBot.Database.Factory.ConFactory;
 import com.github.lbam.dcBot.Database.Models.Localization;
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.Statement;
 
 public class DaoPreferences {
 	
-	private String url, username, password;
+	private static Statement cmd;
+	private static Connection con;
 	
-	private Statement cmd;
-	private Connection con;
-	
-	public DaoPreferences(){
-		username = System.getenv("DBUSER");
-		password = System.getenv("DBPASS");
-		url = System.getenv("DBSERVER");
-	}
-	
-	public boolean existeRegistro(String serverId){
+	public static boolean existeRegistro(String serverId){
 		connect();
 		try {
 			ResultSet rs = cmd.executeQuery("SELECT COUNT(*) as total FROM preferences WHERE guildId = " + serverId);
@@ -39,7 +32,7 @@ public class DaoPreferences {
 		}
 	}
 	
-	public void createPreferences(String guild, String lang){
+	public static void createPreferences(String guild, String lang){
 		connect();
 		try {
 			cmd.executeUpdate("INSERT INTO preferences(guildId,lang)"
@@ -49,7 +42,7 @@ public class DaoPreferences {
 		}
 	}
 	
-	public String getLang(String guild){
+	public static String getLang(String guild){
 		connect();
 		try {
 			ResultSet rs = cmd.executeQuery("SELECT * FROM preferences p WHERE p.guildId = '"+guild+"'");
@@ -63,7 +56,7 @@ public class DaoPreferences {
 		}
 	}
 	
-	public Localization getLocal(String hash, String lang){
+	public static Localization getLocal(String hash, String lang){
 		connect();
 		try {
 			ResultSet rs = cmd.executeQuery("SELECT * FROM localization l WHERE l.hash = '"+hash+"Text'"+" AND l.lang = '"+lang+"'");
@@ -78,7 +71,7 @@ public class DaoPreferences {
 		}
 	}
 	
-	public Localization getTitle(String hash, String lang){
+	public static Localization getTitle(String hash, String lang){
 		connect();
 		try {
 			ResultSet rs = cmd.executeQuery("SELECT * FROM localization l WHERE l.hash = '"+hash+"Title'"+" AND l.lang = '"+lang+"'");
@@ -103,16 +96,16 @@ public class DaoPreferences {
 		}
 	}
 	
-	public void connect(){
+	public static void connect(){
 		try {
-			con = (Connection) ConFactory.getConnection(url, username, password);
-			cmd = (Statement) con.createStatement();
+			con = ConFactory.connection();
+			cmd = con.createStatement();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void close(){
+	public static void close(){
 		try {
 			con.close();
 			cmd.close();

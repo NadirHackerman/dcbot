@@ -14,6 +14,7 @@ import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.util.MissingPermissionsException;
 
 public class Instance {
 	
@@ -25,6 +26,7 @@ public class Instance {
 	DaoChampion database;
 	int progress, maxChampionId;
 	
+	boolean showPermissionWarning = false;
 	IMessage showingMessage;
 	String lang;
 	
@@ -36,16 +38,16 @@ public class Instance {
 		channel = ch;
 		database = db;
 		
-		lang = BotMain.preferences.getLang(ch.getGuild().getID());
+		lang = DaoPreferences.getLang(ch.getGuild().getID());
 	
 		if(progress == 0) {
-			String welcomeTitle = BotMain.preferences.getTitle("welcome", lang).getText();
-			String welcomeText = BotMain.preferences.getLocal("welcome", lang).getText();
+			String welcomeTitle = DaoPreferences.getTitle("welcome", lang).getText();
+			String welcomeText = DaoPreferences.getLocal("welcome", lang).getText();
 			MessageHandler.threadedDesctrutiveMessage(welcomeTitle, welcomeText, Color.yellow, channel, 5000);
 		}
 		
 		int championsLeft = maxChampionId - progress;
-		String startText = String.format(BotMain.preferences.getLocal("start", lang).getText(), database.getTries(playerId), progress, championsLeft);
+		String startText = String.format(DaoPreferences.getLocal("start", lang).getText(), database.getTries(playerId), progress, championsLeft);
 		MessageHandler.threadedDesctrutiveMessage(user.getName(), startText, Color.cyan, channel, 6500);
 		
 		showingMessage = MessageHandler.sendMessage("Descubra o campeão", "Moldando respostas...", Color.black, channel);
@@ -66,16 +68,16 @@ public class Instance {
 		IMessage message = event.getMessage();
 		String guess = message.getContent().toLowerCase();
 		
-		if(message.getAuthor().isBot() || !message.getAuthor().getID().equals(playerId) || guess.startsWith("%dc"))
+		if(message.getAuthor().isBot() || !message.getAuthor().getID().equals(playerId) || guess.startsWith(":dc"))
 			return;	
 		else if(guess.equals("dica")) {
 				if(database.getUsedHints(playerId) < 3) {
-					String hintTitle = String.format(BotMain.preferences.getTitle("hint", lang).getText(),user.getName());
-					String hintText = BotMain.preferences.getLocal(actualChampion.getName(), lang).getText();
+					String hintTitle = String.format(DaoPreferences.getTitle("hint", lang).getText(),user.getName());
+					String hintText = DaoPreferences.getLocal(actualChampion.getName(), lang).getText();
 					MessageHandler.threadedDesctrutiveMessage(hintTitle, hintText, Color.blue, channel, 8000);
 					actualChampion.setUsedHint();
 				}else {
-					String noHintText = BotMain.preferences.getLocal("noHint", lang).getText();
+					String noHintText = DaoPreferences.getLocal("noHint", lang).getText();
 					MessageHandler.threadedDesctrutiveMessage("@"+user.getName(), noHintText, Color.ORANGE, channel, 5000);
 				}
 		}else if(guess.equals(actualChampion.getName())) {
@@ -106,13 +108,24 @@ public class Instance {
 			t.start();
 		}
 		
-		MessageHandler.deleteMessage(message);
+		try {
+			MessageHandler.deleteMessage(message);
+		} catch (MissingPermissionsException e) {
+			if(!showPermissionWarning){
+				MessageHandler.noPermissions(channel);
+				showPermissionWarning = true;
+			}
+		}
 	}
 	
 	public void CompletedGameMessage() {
-		MessageHandler.deleteMessage(showingMessage);
-		String completeGameTitle = String.format(BotMain.preferences.getTitle("completeGame", lang).getText(), user.getName());
-		String completeGameText = String.format(BotMain.preferences.getLocal("completeGame", lang).getText(), database.getTries(playerId));
+		try {
+			MessageHandler.deleteMessage(showingMessage);
+		} catch (MissingPermissionsException e) {
+			e.printStackTrace();
+		}
+		String completeGameTitle = String.format(DaoPreferences.getTitle("completeGame", lang).getText(), user.getName());
+		String completeGameText = String.format(DaoPreferences.getLocal("completeGame", lang).getText(), database.getTries(playerId));
 		MessageHandler.sendMessage(completeGameTitle, completeGameText, Color.pink, channel);
 		new Callback(new GameReceiver(user, channel), "sair", channel).execute();
 	}

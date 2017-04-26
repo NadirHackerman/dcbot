@@ -1,7 +1,6 @@
 package com.github.lbam.dcBot;
 import java.io.IOException;
 
-import com.github.lbam.dcBot.Database.DAO.DaoPreferences;
 import com.github.lbam.dcBot.Handlers.EventHandler;
 
 import sx.blah.discord.api.ClientBuilder;
@@ -15,13 +14,11 @@ import sx.blah.discord.util.DiscordException;
 public class BotMain{
 	
 	public static IDiscordClient Bot;
-	public static DaoPreferences preferences;
 	
     public static void main(String[] args) throws IOException, DiscordException{
     	
     	Bot = getClient(System.getenv("TOKEN"));
     	Bot.getDispatcher().registerListener(new EventHandler());
-    	preferences = new DaoPreferences();
     }
     
     public static IDiscordClient getClient(String Token) throws DiscordException{

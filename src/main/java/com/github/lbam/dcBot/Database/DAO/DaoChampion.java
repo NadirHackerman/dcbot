@@ -3,26 +3,15 @@ package com.github.lbam.dcBot.Database.DAO;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-
+import java.sql.Connection;
+import java.sql.Statement;
 import com.github.lbam.dcBot.Database.Factory.ConFactory;
 import com.github.lbam.dcBot.Database.Models.Champion;
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.Statement;
 
 public class DaoChampion {
 	
-	private String url, username, password;
-//	private Properties prop;
-	
 	private Connection con;
 	private Statement cmd;
-	
-	public DaoChampion() {
-		username = System.getenv("DBUSER");
-		password = System.getenv("DBPASS");
-		url = System.getenv("DBSERVER");
-	}
 	
 	public Champion getRandomChampion(String id) {
 		connect();
@@ -173,8 +162,8 @@ public class DaoChampion {
 	
 	public void connect() {
 		try {
-			con = (Connection) ConFactory.getConnection(url, username, password);
-			cmd = (Statement) con.createStatement();
+			con = ConFactory.connection();
+			cmd = con.createStatement();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
