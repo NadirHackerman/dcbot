@@ -1,34 +1,17 @@
 package com.github.lbam.dcBot.Database.DAO;
 
-import java.io.FileInputStream;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Properties;
-
+import java.sql.Connection;
+import java.sql.Statement;
 import com.github.lbam.dcBot.Database.Factory.ConFactory;
 import com.github.lbam.dcBot.Database.Models.Champion;
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.Statement;
 
 public class DaoChampion {
 	
-	private String url, username, password;
-	private Properties prop;
-	
 	private Connection con;
 	private Statement cmd;
-	
-	public DaoChampion() {
-		prop = new Properties();
-    	try {
-			prop.load(new FileInputStream("config.properties"));
-			url = prop.getProperty("database");
-			username = prop.getProperty("dbuser");
-			password = prop.getProperty("dbpassword");
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
 	
 	public Champion getRandomChampion(String id) {
 		connect();
@@ -45,8 +28,7 @@ public class DaoChampion {
 			
 			Champion c = new Champion(
 					rs.getInt("id"), rs.getString("name"), 
-					rs.getString("representation"), 
-					rs.getString("hint"));
+					rs.getString("representation"));
 			
 			return c;
 		} catch (SQLException e) {
@@ -149,11 +131,10 @@ public class DaoChampion {
 		connect();
 		ResultSet rs;
 		try {
-			rs = cmd.executeQuery("SELECT * c.name "
-					+ "FROM champions c "
-					+ "WHERE c.hint = 'Não existem dicas para esse champion :('");
+			rs = cmd.executeQuery("SELECT *"
+					+ "FROM champions c");
 			while(rs.next()) {
-				System.out.println(rs.getString("name"));
+				System.out.println(rs.getString("name")+ " " + rs.getString("hint"));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -161,10 +142,28 @@ public class DaoChampion {
 		}
 	}
 	
+	public Champion getChampionById(int id){
+		connect();
+		ResultSet rs;
+		try {
+			rs = cmd.executeQuery("SELECT * FROM champions c WHERE c.id = "+id);
+			rs.next();
+			return new Champion(rs.getInt("id"), rs.getString("name"), 
+					rs.getString("representation"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		finally{
+			close();
+		}
+		
+	}
+	
 	public void connect() {
 		try {
-			con = (Connection) ConFactory.getConnection(url, username, password);
-			cmd = (Statement) con.createStatement();
+			con = ConFactory.connection();
+			cmd = con.createStatement();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

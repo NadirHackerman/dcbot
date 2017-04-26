@@ -3,6 +3,7 @@ package com.github.lbam.dcBot.Handlers;
 import java.awt.Color;
 
 import com.github.lbam.dcBot.BotMain;
+import com.github.lbam.dcBot.Database.DAO.DaoPreferences;
 import com.github.lbam.dcBot.Runnables.SelfDestructiveMessage;
 
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
@@ -16,10 +17,7 @@ import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
 
 
-
 public class MessageHandler {
-	
-	static boolean permissionWarning = false;
 	
 	public static IMessage sendMessage(String msg, IChannel ch) {
 		try {
@@ -53,11 +51,13 @@ public class MessageHandler {
 	}
 	
 	public static void sendInvalidCommand(IChannel ch) {
-		sendMessage("Comando inválido!", "Digite %dc ajuda para saber mais.", Color.red, ch);
+		String lang = DaoPreferences.getLang(ch.getGuild().getID());
+		sendMessage(DaoPreferences.getTitle("invalidCommand", lang).getText(), DaoPreferences.getLocal("invalidCommand", lang).getText(), Color.red, ch);
 	}
 	
 	public static void sendIngameError(IChannel ch) {
-		sendMessage("Você já está em jogo!", "Digite %dc sair antes de iniciar um novo.", Color.red, ch);
+		String lang = DaoPreferences.getLang(ch.getGuild().getID());
+		sendMessage(DaoPreferences.getTitle("ingameError", lang).getText(), DaoPreferences.getLocal("ingameError", lang).getText(), Color.red, ch);
 	}
 	
 	public static void editChampionMessage(IUser player, String representation, IMessage msg) {
@@ -69,12 +69,12 @@ public class MessageHandler {
 		}
 	}
 	
-	public static void sendWrongAnswer(IChannel ch, IUser user) {
-		threadedDesctrutiveMessage(user.getName(), "Oops! Resposta errada.", Color.red, ch, 2000);
+	public static void sendWrongAnswer(IChannel ch, IUser user, String lang) {
+		threadedDesctrutiveMessage(user.getName(), DaoPreferences.getLocal("incorrect", lang).getText(), Color.red, ch, 2000);
 	}
 	
-	public static void sendCorrectAnswer(IChannel ch, IUser user) {
-		threadedDesctrutiveMessage(user.getName(), "Correto!", Color.green, ch, 2000);
+	public static void sendCorrectAnswer(IChannel ch, IUser user, String lang) {
+		threadedDesctrutiveMessage(user.getName(), DaoPreferences.getLocal("correct",lang).getText(), Color.green, ch, 2000);
 	}
 	
 	public static void threadedDesctrutiveMessage(String title, String body, Color color, IChannel ch, int delay) {
@@ -82,19 +82,26 @@ public class MessageHandler {
 		t.start();
 	}
 	
-	public static void deleteMessage(IMessage msg) {
+	public static void showHelpPanel(IChannel ch){
+		String lang = DaoPreferences.getLang(ch.getGuild().getID());
+		String title = DaoPreferences.getTitle("gWelcome", lang).getText();
+		String text = DaoPreferences.getLocal("gWelcome", lang).getText();
+		MessageHandler.sendMessage(title, text, Color.yellow, ch);
+	}
+	
+	public static void deleteMessage(IMessage msg) throws MissingPermissionsException {
 		try {
 			msg.delete();
-		} catch (MissingPermissionsException e) {
-			if(permissionWarning == false) {
-				MessageHandler.sendMessage("Atenção!", "O bot não possui permissões necessárias no servidor para excluir os palpites. Habilite-as para assim ter uma melhor experiência.", Color.yellow, msg.getChannel());
-				permissionWarning = true;
-			}
 		} catch (RateLimitException e) {
 			e.printStackTrace();
 		} catch (DiscordException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void noPermissions(IChannel ch){
+		String lang = DaoPreferences.getLang(ch.getGuild().getID());
+		MessageHandler.sendMessage("!!!!!!", DaoPreferences.getLocal("permission", lang).getText(), Color.yellow, ch);
 	}
 	
 	
