@@ -43,7 +43,7 @@ public class EventHandler {
 				}
 			}
 		}
-		
+		System.out.println("??g");
 		for(IChannel ch : server.getChannels()) {
 			MessageHandler.showHelpPanel(ch);
 		}
