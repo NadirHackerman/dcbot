@@ -54,12 +54,15 @@ public class EventHandler {
 		IMessage message = event.getMessage();
 		String[] args = message.getContent().split(" ");
 		
+		System.out.println("??");
 		if(message.getAuthor().isBot())
 			return;
 
 		if(args[0].equals(":dc") && args.length > 1) {
+			System.out.println("??x");
 			Command cmd = new Callback(new GameReceiver(message.getAuthor(),message.getChannel()), args[1], message.getChannel());
 			cmd.execute();
+			System.out.println("??c");
 		} 
 		else
 			return;
