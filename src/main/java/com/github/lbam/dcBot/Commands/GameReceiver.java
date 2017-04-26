@@ -5,7 +5,6 @@ import java.awt.Color;
 import com.github.lbam.dcBot.BotMain;
 import com.github.lbam.dcBot.Instance;
 import com.github.lbam.dcBot.Database.DAO.DaoChampion;
-import com.github.lbam.dcBot.Database.DAO.DaoPreferences;
 import com.github.lbam.dcBot.Handlers.InstanceHandler;
 import com.github.lbam.dcBot.Handlers.MessageHandler;
 

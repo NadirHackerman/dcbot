@@ -94,6 +94,7 @@ public class Instance {
 		}
 		else if(!guess.equals(actualChampion.getName())) {
 			MessageHandler.sendWrongAnswer(channel, user, lang);
+			System.out.println(message.getContent() + " wtf");
 			
 			Runnable r = new Runnable() {
 				public void run() { 

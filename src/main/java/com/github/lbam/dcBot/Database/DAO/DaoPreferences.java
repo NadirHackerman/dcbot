@@ -9,7 +9,7 @@ import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.Statement;
 
 public class DaoPreferences {
-
+	
 	private String url, username, password;
 	
 	private Statement cmd;
