@@ -22,7 +22,7 @@ public class ConFactory {
     private static Connection createConnection() {
         Connection con = null;
         try {
-            con = DriverManager.getConnection(username, password, url);
+            con = DriverManager.getConnection(url, username, password);
         }catch(SQLException e){
             e.printStackTrace();
         }
@@ -30,6 +30,6 @@ public class ConFactory {
     }
  
     public static Connection connection(){
-        return ConFactory.createConnection();
+        return connect.createConnection();
     }
 }
