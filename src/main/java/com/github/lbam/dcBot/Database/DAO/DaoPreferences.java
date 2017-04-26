@@ -9,8 +9,7 @@ import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.Statement;
 
 public class DaoPreferences {
-	
-	public static DaoPreferences db;
+
 	private String url, username, password;
 	
 	private Statement cmd;
@@ -20,7 +19,6 @@ public class DaoPreferences {
 		username = System.getenv("DBUSER");
 		password = System.getenv("DBPASS");
 		url = System.getenv("DBSERVER");
-		db = this;
 	}
 	
 	public boolean existeRegistro(String serverId){

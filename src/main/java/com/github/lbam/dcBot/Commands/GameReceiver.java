@@ -37,7 +37,7 @@ public class GameReceiver {
 				InstanceHandler.instances.put(playerId, instancia);
 				BotMain.Bot.getDispatcher().registerListener(instancia);
 			}else {
-				MessageHandler.sendMessage(String.format(DaoPreferences.db.getTitle("completeGame", DaoPreferences.db.getLang(ch.getGuild().getID())).getText(), user.getID()), String.format(DaoPreferences.db.getLocal("completeGame", DaoPreferences.db.getLang(ch.getGuild().getID())).getText(), db.getTries(playerId)), Color.pink, ch);
+				MessageHandler.sendMessage(String.format(BotMain.preferences.getTitle("completeGame", BotMain.preferences.getLang(ch.getGuild().getID())).getText(), user.getID()), String.format(BotMain.preferences.getLocal("completeGame", BotMain.preferences.getLang(ch.getGuild().getID())).getText(), db.getTries(playerId)), Color.pink, ch);
 			}
 		}else {
 			MessageHandler.sendIngameError(ch);
@@ -56,7 +56,7 @@ public class GameReceiver {
 		if(!gameExists) {
 			MessageHandler.showHelpPanel(ch);
 		}else {
-			MessageHandler.sendMessage(DaoPreferences.db.getLocal("ingameHelp", DaoPreferences.db.getLang(ch.getGuild().getID())).getText(), ch);
+			MessageHandler.sendMessage(BotMain.preferences.getLocal("ingameHelp", BotMain.preferences.getLang(ch.getGuild().getID())).getText(), ch);
 		}
 	}
 	

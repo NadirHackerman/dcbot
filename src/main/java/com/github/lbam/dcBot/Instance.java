@@ -36,16 +36,16 @@ public class Instance {
 		channel = ch;
 		database = db;
 		
-		lang = DaoPreferences.db.getLang(ch.getGuild().getID());
+		lang = BotMain.preferences.getLang(ch.getGuild().getID());
 	
 		if(progress == 0) {
-			String welcomeTitle = DaoPreferences.db.getTitle("welcome", lang).getText();
-			String welcomeText = DaoPreferences.db.getLocal("welcome", lang).getText();
+			String welcomeTitle = BotMain.preferences.getTitle("welcome", lang).getText();
+			String welcomeText = BotMain.preferences.getLocal("welcome", lang).getText();
 			MessageHandler.threadedDesctrutiveMessage(welcomeTitle, welcomeText, Color.yellow, channel, 5000);
 		}
 		
 		int championsLeft = maxChampionId - progress;
-		String startText = String.format(DaoPreferences.db.getLocal("start", lang).getText(), database.getTries(playerId), progress, championsLeft);
+		String startText = String.format(BotMain.preferences.getLocal("start", lang).getText(), database.getTries(playerId), progress, championsLeft);
 		MessageHandler.threadedDesctrutiveMessage(user.getName(), startText, Color.cyan, channel, 6500);
 		
 		showingMessage = MessageHandler.sendMessage("Descubra o campeão", "Moldando respostas...", Color.black, channel);
@@ -70,12 +70,12 @@ public class Instance {
 			return;	
 		else if(guess.equals("dica")) {
 				if(database.getUsedHints(playerId) < 3) {
-					String hintTitle = String.format(DaoPreferences.db.getTitle("hint", lang).getText(),user.getName());
-					String hintText = DaoPreferences.db.getLocal(actualChampion.getName(), lang).getText();
+					String hintTitle = String.format(BotMain.preferences.getTitle("hint", lang).getText(),user.getName());
+					String hintText = BotMain.preferences.getLocal(actualChampion.getName(), lang).getText();
 					MessageHandler.threadedDesctrutiveMessage(hintTitle, hintText, Color.blue, channel, 8000);
 					actualChampion.setUsedHint();
 				}else {
-					String noHintText = DaoPreferences.db.getLocal("noHint", lang).getText();
+					String noHintText = BotMain.preferences.getLocal("noHint", lang).getText();
 					MessageHandler.threadedDesctrutiveMessage("@"+user.getName(), noHintText, Color.ORANGE, channel, 5000);
 				}
 		}else if(guess.equals(actualChampion.getName())) {
@@ -110,8 +110,8 @@ public class Instance {
 	
 	public void CompletedGameMessage() {
 		MessageHandler.deleteMessage(showingMessage);
-		String completeGameTitle = String.format(DaoPreferences.db.getTitle("completeGame", lang).getText(), user.getName());
-		String completeGameText = String.format(DaoPreferences.db.getLocal("completeGame", lang).getText(), database.getTries(playerId));
+		String completeGameTitle = String.format(BotMain.preferences.getTitle("completeGame", lang).getText(), user.getName());
+		String completeGameText = String.format(BotMain.preferences.getLocal("completeGame", lang).getText(), database.getTries(playerId));
 		MessageHandler.sendMessage(completeGameTitle, completeGameText, Color.pink, channel);
 		new Callback(new GameReceiver(user, channel), "sair", channel).execute();
 	}
