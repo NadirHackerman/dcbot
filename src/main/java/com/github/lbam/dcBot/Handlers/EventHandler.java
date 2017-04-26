@@ -1,6 +1,8 @@
 package com.github.lbam.dcBot.Handlers;
 
 
+import java.util.ArrayList;
+
 import com.github.lbam.dcBot.BotMain;
 import com.github.lbam.dcBot.Commands.Callback;
 import com.github.lbam.dcBot.Commands.GameReceiver;
@@ -21,9 +23,13 @@ import sx.blah.discord.util.RateLimitException;
 
 public class EventHandler {
 	
+	ArrayList<IChannel> channels = new ArrayList<IChannel>();
 	@EventSubscriber
 	public void onReadyEvent(ReadyEvent event){
 		System.out.println("Entrou");
+		for(IChannel ch : channels) {
+			MessageHandler.showHelpPanel(ch);
+		}
 	}
 	
 	@EventSubscriber
@@ -45,7 +51,7 @@ public class EventHandler {
 		}
 		System.out.println("??g");
 		for(IChannel ch : server.getChannels()) {
-			MessageHandler.showHelpPanel(ch);
+			channels.add(ch);
 		}
 		
 	}
