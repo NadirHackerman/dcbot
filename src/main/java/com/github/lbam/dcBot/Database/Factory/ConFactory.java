@@ -7,20 +7,17 @@ import java.sql.SQLException;
 public class ConFactory {
  
     private static ConFactory connect = new ConFactory();
-    public static String username;
-    public static String password;
-    public static String url;
+    public static final String username = System.getenv("DBUSER");
+    public static final String password = System.getenv("DBPASS");
+    public static final String url = System.getenv("DBSERVER");
  
- 
+    //e.e
     private ConFactory(){
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        username = System.getenv("DBUSER");
-        password = System.getenv("DBPASS");
-        url = System.getenv("DBSERVER");
     }
     private static Connection createConnection() {
         Connection con = null;
