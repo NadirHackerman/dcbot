@@ -30,6 +30,6 @@ public class ConFactory {
     }
  
     public static Connection connection(){
-        return connect.createConnection();
+        return ConFactory.createConnection();
     }
 }
