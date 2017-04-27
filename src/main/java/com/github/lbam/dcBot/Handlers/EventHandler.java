@@ -47,7 +47,6 @@ public class EventHandler {
 	}
 	@EventSubscriber
 	public void onMessageEvent(MessageReceivedEvent event){
-		System.out.println(event.getMessage().getContent());
 		IMessage message = event.getMessage();
 		String[] args = message.getContent().split(" ");
 	
