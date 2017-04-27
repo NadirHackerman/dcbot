@@ -21,9 +21,6 @@ public class BotMain{
     }
     
     public static IDiscordClient getClient(String Token) throws DiscordException{
-		return new ClientBuilder()
-				.withToken(Token)
-                .withShards(10)
-                .login();
+		return new ClientBuilder().withToken(Token).login();
     }
 }
