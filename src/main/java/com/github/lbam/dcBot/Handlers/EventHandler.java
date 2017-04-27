@@ -33,11 +33,6 @@ public class EventHandler {
 				DaoPreferences.createPreferences(server.getID(), "br");
 			}else{
 				DaoPreferences.createPreferences(server.getID(), "us");
-				try {
-					server.getUserByID(BotMain.Bot.getOurUser().getID()).getClient().changeUsername("Who is that champion?");
-				} catch (Exception e){
-					System.out.println("Não pude mudar o nick :(");
-				}
 			}
 		}
 		for(IChannel ch : server.getChannels()) {
