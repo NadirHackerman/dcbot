@@ -18,13 +18,9 @@ import sx.blah.discord.handle.obj.IMessage;
 
 public class EventHandler {
 	
-	ArrayList<IChannel> channels = new ArrayList<IChannel>();
 	@EventSubscriber
 	public void onReadyEvent(ReadyEvent event){
 		System.out.println("Entrou");
-		for(IChannel ch : channels) {
-			MessageHandler.showHelpPanel(ch);
-		}
 	}
 	
 	@EventSubscriber
@@ -38,14 +34,14 @@ public class EventHandler {
 			}else{
 				DaoPreferences.createPreferences(server.getID(), "us");
 				try {
-					BotMain.Bot.changeUsername("Who is that champion?");
+					server.getUserByID(BotMain.Bot.getOurUser().getID()).getClient().changeUsername("Who is that champion?");
 				} catch (Exception e){
 					System.out.println("Não pude mudar o nick :(");
 				}
 			}
 		}
 		for(IChannel ch : server.getChannels()) {
-			channels.add(ch);
+			MessageHandler.showHelpPanel(ch);
 		}
 		
 	}
