@@ -19,7 +19,6 @@ public class DaoPreferences {
 			PreparedStatement cmdp = con.prepareStatement("SELECT COUNT(*) as total FROM preferences WHERE guildId = ?");
 			cmdp.setString(1, serverId);
 			ResultSet rs = cmdp.executeQuery();
-			cmdp.close();
 			rs.next();
 			if(rs.getInt("total") > 0){
 				return true;
@@ -42,7 +41,6 @@ public class DaoPreferences {
 			cmdp.setString(1, guild);
 			cmdp.setString(2, lang);
 			cmdp.executeUpdate();
-			cmdp.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -54,7 +52,6 @@ public class DaoPreferences {
 			PreparedStatement cmdp = con.prepareStatement("SELECT * FROM preferences p WHERE p.guildId = ?");
 			cmdp.setString(1, guild);
 			ResultSet rs = cmdp.executeQuery();
-			cmdp.close();
 			rs.next();
 			return rs.getString("lang");
 		} catch (SQLException e) {
@@ -72,7 +69,6 @@ public class DaoPreferences {
 			cmdp.setString(1, hash);
 			cmdp.setString(2, lang);
 			ResultSet rs = cmdp.executeQuery();
-			cmdp.close();
 			rs.next();
 			Localization locale = new Localization(rs.getString("lang"),rs.getString("hash"),rs.getString("text"));
 			return locale;
@@ -91,7 +87,6 @@ public class DaoPreferences {
 			cmdp.setString(1, hash+"Text");
 			cmdp.setString(2, lang);
 			ResultSet rs = cmdp.executeQuery();
-			cmdp.close();
 			rs.next();
 			Localization locale = new Localization(rs.getString("lang"),rs.getString("hash"),rs.getString("text"));
 			return locale;
