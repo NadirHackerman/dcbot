@@ -65,7 +65,7 @@ public class DaoPreferences {
 		connect();
 		try {
 			PreparedStatement cmdp = con.prepareStatement("SELECT * FROM localization WHERE hash = ? AND lang = ?");
-			cmdp.setString(1, hash);
+			cmdp.setString(1, hash+"Text");
 			cmdp.setString(2, lang);
 			ResultSet rs = cmdp.executeQuery();
 			rs.next();
@@ -83,7 +83,7 @@ public class DaoPreferences {
 		connect();
 		try {
 			PreparedStatement cmdp = con.prepareStatement("SELECT * FROM localization WHERE hash = ? AND lang = ?");
-			cmdp.setString(1, hash+"Text");
+			cmdp.setString(1, hash+"Title");
 			cmdp.setString(2, lang);
 			ResultSet rs = cmdp.executeQuery();
 			rs.next();
