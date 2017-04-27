@@ -1,8 +1,8 @@
 package com.github.lbam.dcBot.Handlers;
 
-import java.util.ArrayList;
 
-import com.github.lbam.dcBot.BotMain;
+
+
 import com.github.lbam.dcBot.Commands.Callback;
 import com.github.lbam.dcBot.Commands.GameReceiver;
 import com.github.lbam.dcBot.Database.DAO.DaoPreferences;
@@ -14,7 +14,6 @@ import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
-
 
 public class EventHandler {
 	
@@ -35,6 +34,7 @@ public class EventHandler {
 				DaoPreferences.createPreferences(server.getID(), "us");
 			}
 		}
+		
 		for(IChannel ch : server.getChannels()) {
 			MessageHandler.showHelpPanel(ch);
 		}
