@@ -49,7 +49,7 @@ public class DaoPreferences {
 	public static String getLang(String guild){
 		connect();
 		try {
-			PreparedStatement cmdp = con.prepareStatement("SELECT * FROM preferences p WHERE p.guildId = ?");
+			PreparedStatement cmdp = con.prepareStatement("SELECT * FROM preferences WHERE guildId = ?");
 			cmdp.setString(1, guild);
 			ResultSet rs = cmdp.executeQuery();
 			rs.next();
@@ -65,7 +65,7 @@ public class DaoPreferences {
 	public static Localization getLocal(String hash, String lang){
 		connect();
 		try {
-			PreparedStatement cmdp = con.prepareStatement("SELECT * FROM localization l WHERE l.hash = ?"+" AND l.lang = ?");
+			PreparedStatement cmdp = con.prepareStatement("SELECT * FROM localization WHERE hash = ?"+" AND lang = ?");
 			cmdp.setString(1, hash);
 			cmdp.setString(2, lang);
 			ResultSet rs = cmdp.executeQuery();
@@ -83,7 +83,7 @@ public class DaoPreferences {
 	public static Localization getTitle(String hash, String lang){
 		connect();
 		try {
-			PreparedStatement cmdp = con.prepareStatement("SELECT * FROM localization l WHERE l.hash = ?"+" AND l.lang = ?");
+			PreparedStatement cmdp = con.prepareStatement("SELECT * FROM localization WHERE hash = ?"+" AND lang = ?");
 			cmdp.setString(1, hash+"Text");
 			cmdp.setString(2, lang);
 			ResultSet rs = cmdp.executeQuery();
