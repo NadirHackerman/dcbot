@@ -1,8 +1,4 @@
 package com.github.lbam.dcBot.Handlers;
-
-
-
-
 import com.github.lbam.dcBot.Commands.Callback;
 import com.github.lbam.dcBot.Commands.GameReceiver;
 import com.github.lbam.dcBot.Database.DAO.DaoPreferences;
