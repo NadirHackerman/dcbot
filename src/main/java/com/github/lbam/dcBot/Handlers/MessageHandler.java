@@ -80,8 +80,7 @@ public class MessageHandler {
 	}
 	
 	public static void threadedDesctrutiveMessage(String title, String body, Color color, IChannel ch, int delay) {
-		Thread t = new Thread(new SelfDestructiveMessage(title, body, color, ch, delay));
-		t.start();
+		new Thread(() -> sendDestructiveMessage(title,body,color,ch,delay)).start();
 	}
 	
 	public static void showHelpPanel(IChannel ch){
