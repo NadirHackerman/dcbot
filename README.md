@@ -1,11 +1,11 @@
 # Who is that champion? (Descubra o Campeão)
-![License MIT](https://opensource.org/licenses/MIT)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
 ![Server is UP](https://img.shields.io/uptimerobot/status/m778918918-3e92c097147760ee39d02d36.svg)
 >A bot made with Discord4j library. Guess the League of Legends' champions from emojis representations.
 
 ## Contributions:
-*If you're interested to help me with the development, by either improving or fixing the bot, please talk to me on Discord(Luke#7360) or create an issue with your ideas and bug reports.
-*Documentation (WIP)
+* If you're interested to help me with the development, by either improving or fixing the bot, please talk to me on Discord(Luke#7360) or create an issue with your ideas and bug reports.
+* Documentation (WIP)
 
 ### Commands:
 * _%dc jogar (play)_ - **Starts the game**
