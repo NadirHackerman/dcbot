@@ -37,7 +37,7 @@ public class DaoChampion {
 			e.printStackTrace();
 			return null;
 		}finally {
-			close(rs, cmd);
+			close(cmd);
 		}
 	}
 	
@@ -56,7 +56,7 @@ public class DaoChampion {
 			e.printStackTrace();
 			return 0;
 		}finally {
-			close(rs, cmd);
+			close(cmd);
 		}
 	}
 	
@@ -74,7 +74,7 @@ public class DaoChampion {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
-			close(null, cmd);
+			close(cmd);
 		}
 	}
 	
@@ -92,7 +92,7 @@ public class DaoChampion {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
-			close(null, cmd);
+			close(cmd);
 		}
 	}
 	
@@ -112,7 +112,7 @@ public class DaoChampion {
 			e.printStackTrace();
 			return 0;
 		}finally {
-			close(rs, cmd);
+			close(cmd);
 		}
 	}
 	
@@ -132,7 +132,7 @@ public class DaoChampion {
 			return null;
 		}
 		finally{
-			close(rs, cmd);
+			close(cmd);
 		}
 		
 	}
@@ -145,11 +145,9 @@ public class DaoChampion {
 		}
 	}
 	
-	public void close(ResultSet rs, PreparedStatement cmd) {
+	public void close(PreparedStatement cmd) {
 		try {
 			con.close();
-			if(!rs.equals(null))
-				rs.close();
 			cmd.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
