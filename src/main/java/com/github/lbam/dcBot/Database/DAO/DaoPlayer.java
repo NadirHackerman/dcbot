@@ -37,6 +37,7 @@ public class DaoPlayer {
 			cmd = con.prepareStatement("SELECT COUNT(*) AS total "
 					+ "FROM progresso "
 					+ "WHERE idPlayer = ?");
+			cmd.setString(1, id);
 			rs = cmd.executeQuery();
 			rs.next();
 			return rs.getInt("total");
