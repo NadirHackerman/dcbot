@@ -41,14 +41,20 @@ public class Instance {
 			MessageHandler.threadedDesctrutiveMessage(welcomeTitle, welcomeText, Color.yellow, player.getChannel(), 5000);
 		}
 		
-		int championsLeft = maxChampion - progress;
-		String startText = String.format(DaoPreferences.getLocal("start", lang).getText(), DaoPlayer.getTries(player.getPlayerId()), progress, championsLeft);
-		MessageHandler.threadedDesctrutiveMessage(player.getName(), startText, Color.cyan, player.getChannel(), 6500);
+		showStartText();
 		
 		showingMessage = MessageHandler.sendMessage("Descubra o campeão", "Moldando respostas...", Color.black, player.getChannel());
 		showNextChampion();
 	}
 	
+	private void showStartText() {
+		int championsLeft = maxChampion - progress;
+		int tries = DaoPlayer.getTries(player.getPlayerId());
+		String start = DaoPreferences.getLocal("start", lang).getText();
+		String startText = String.format(start, tries, progress, championsLeft);
+		MessageHandler.threadedDesctrutiveMessage(player.getName(), startText, Color.cyan, player.getChannel(), 6500);
+	}
+
 	private void showNextChampion() {
 		if(progress == maxChampion) {
 			CompletedGameMessage();
@@ -63,11 +69,11 @@ public class Instance {
 		IMessage message = event.getMessage();
 		String guess = message.getContent().toLowerCase();
 		
-		if(message.getAuthor().isBot() || !message.getAuthor().getID().equals(player.getPlayerId()) || guess.startsWith(":dc"))
+		if(message.getAuthor().isBot() || !message.getAuthor().getID().equals(player.getPlayerId()) || guess.startsWith(":dc") || !message.getChannel().equals(player.getChannel()))
 			return;	
 		else if(guess.equals("dica")) {
 				if(database.getUsedHints(player.getPlayerId()) < 3) {
-					useHint();
+					new Thread(() -> {useHint();}).start();
 				}else {
 					String noHintText = DaoPreferences.getLocal("noHint", lang).getText();
 					MessageHandler.threadedDesctrutiveMessage("@"+player.getName(), noHintText, Color.ORANGE, player.getChannel(), 5000);
@@ -84,14 +90,13 @@ public class Instance {
 			new Thread( () -> {database.registerIncorrectGuess(player.getPlayerId(), actualChampion.getId(), actualChampion.getUsedHint());} ).start();
 		}
 		
-		try {
-			MessageHandler.deleteMessage(message);
-		} catch (MissingPermissionsException e) {
-			if(!showPermissionWarning){
-				MessageHandler.noPermissions(player.getChannel());
-				showPermissionWarning = true;
-			}
-		}
+
+		new Thread( () -> {
+			try {
+				MessageHandler.deleteMessage(message);
+			} catch (Exception e) {
+				e.printStackTrace();
+		}}).start();
 	}
 	
 	public void useHint(){
