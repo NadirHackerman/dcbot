@@ -5,6 +5,7 @@ public class Champion {
 	private String name;
 	private String representation;
 	private int usedHint;
+	private boolean correct = false;
 	
 	public Champion(int id, String name, String representation) {
 		this.id = id;
@@ -37,6 +38,15 @@ public class Champion {
 	public void setUsedHint() {
 		this.usedHint = 1;
 	}
+
+	public boolean isCorrect() {
+		return correct;
+	}
+
+	public void setCorrect() {
+		this.correct = true;
+	}
+
 
 	
 }

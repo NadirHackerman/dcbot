@@ -78,18 +78,25 @@ public class Instance {
 					String noHintText = DaoPreferences.getLocal("noHint", lang).getText();
 					MessageHandler.threadedDesctrutiveMessage("@"+player.getName(), noHintText, Color.ORANGE, player.getChannel(), 5000);
 				}
-		}else if(guess.equals(actualChampion.getName())) {
+		}else if(guess.equals(actualChampion.getName()) && !actualChampion.isCorrect()) {
 			progress++;
+			actualChampion.setCorrect();
 			MessageHandler.sendCorrectAnswer(player.getChannel(), player.getUser(), lang);
-			database.registerCorrectAnswer(player.getPlayerId(), actualChampion.getId(), actualChampion.getUsedHint()); 
-			showNextChampion();
+			
+			new Thread(()-> {	
+				database.registerCorrectAnswer(player.getPlayerId(), actualChampion.getId(), actualChampion.getUsedHint()); 
+				showNextChampion();
+			}
+			).start();
 		}
 		else if(!guess.equals(actualChampion.getName())) {
 			MessageHandler.sendWrongAnswer(player.getChannel(), player.getUser(), lang);
-			database.registerIncorrectGuess(player.getPlayerId(), actualChampion.getId(), actualChampion.getUsedHint());
+			
+			new Thread(()->{
+				database.registerIncorrectGuess(player.getPlayerId(), actualChampion.getId(), actualChampion.getUsedHint());
+			}).start();
 		}
 		
-
 		new Thread( () -> {
 			try {
 				MessageHandler.deleteMessage(message);
