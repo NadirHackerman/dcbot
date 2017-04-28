@@ -148,7 +148,8 @@ public class DaoChampion {
 	public void close(ResultSet rs, PreparedStatement cmd) {
 		try {
 			con.close();
-			rs.close();
+			if(!rs.equals(null))
+				rs.close();
 			cmd.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
