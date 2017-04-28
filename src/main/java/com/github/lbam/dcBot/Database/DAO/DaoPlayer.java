@@ -16,7 +16,7 @@ public class DaoPlayer {
 		PreparedStatement cmd = null;
 		try {
 			cmd = con.prepareStatement("SELECT COUNT(*) AS total FROM progresso "
-					+ "WHERE idPlayer = ? AND p.status = 1");
+					+ "WHERE idPlayer = ? AND status = 1");
 			cmd.setString(1, id);
 			rs = cmd.executeQuery();
 			rs.next();
