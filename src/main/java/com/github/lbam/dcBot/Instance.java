@@ -5,61 +5,62 @@ import java.awt.Color;
 import com.github.lbam.dcBot.Commands.Callback;
 import com.github.lbam.dcBot.Commands.GameReceiver;
 import com.github.lbam.dcBot.Database.DAO.DaoChampion;
+import com.github.lbam.dcBot.Database.DAO.DaoPlayer;
 import com.github.lbam.dcBot.Database.DAO.DaoPreferences;
 import com.github.lbam.dcBot.Database.Models.Champion;
+import com.github.lbam.dcBot.Database.Models.Player;
 import com.github.lbam.dcBot.Handlers.MessageHandler;
 
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
-import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.MissingPermissionsException;
 
 public class Instance {
-	
-	IUser user;
-	String playerId;
-	IChannel channel;
-	
+	Player player;
 	Champion actualChampion;
+	
+	String lang;
 	DaoChampion database;
-	int progress, maxChampionId;
+	int progress, maxChampion;
 	
 	boolean showPermissionWarning = false;
 	IMessage showingMessage;
-	String lang;
 	
-	public Instance(IUser user, IChannel ch, DaoChampion db, int progress, int maxChampion) {
-		this.user = user;
-		this.progress = progress;
-		maxChampionId = maxChampion;
-		playerId = user.getID();
-		channel = ch;
-		database = db;
+	public Instance(Player player) {
+		this.player = player;
+		lang = player.getLang();
+		progress = player.getProgress();
 		
-		lang = DaoPreferences.getLang(ch.getGuild().getID());
-	
+		database = new DaoChampion();
+		maxChampion = database.getMaxChampion();
+		
 		if(progress == 0) {
 			String welcomeTitle = DaoPreferences.getTitle("welcome", lang).getText();
 			String welcomeText = DaoPreferences.getLocal("welcome", lang).getText();
-			MessageHandler.threadedDesctrutiveMessage(welcomeTitle, welcomeText, Color.yellow, channel, 5000);
+			MessageHandler.threadedDesctrutiveMessage(welcomeTitle, welcomeText, Color.yellow, player.getChannel(), 5000);
 		}
 		
-		int championsLeft = maxChampionId - progress;
-		String startText = String.format(DaoPreferences.getLocal("start", lang).getText(), database.getTries(playerId), progress, championsLeft);
-		MessageHandler.threadedDesctrutiveMessage(user.getName(), startText, Color.cyan, channel, 6500);
+		showStartText();
 		
-		showingMessage = MessageHandler.sendMessage("Descubra o campeão", "Moldando respostas...", Color.black, channel);
+		showingMessage = MessageHandler.sendMessage("Descubra o campeão", "Moldando respostas...", Color.black, player.getChannel());
 		showNextChampion();
 	}
 	
+	private void showStartText() {
+		int championsLeft = maxChampion - progress;
+		int tries = DaoPlayer.getTries(player.getPlayerId());
+		String start = DaoPreferences.getLocal("start", lang).getText();
+		String startText = String.format(start, tries, progress, championsLeft);
+		MessageHandler.threadedDesctrutiveMessage(player.getName(), startText, Color.cyan, player.getChannel(), 6500);
+	}
+
 	private void showNextChampion() {
-		if(progress == maxChampionId) {
+		if(progress == maxChampion) {
 			CompletedGameMessage();
 		}else {
-			actualChampion = database.getRandomChampion(playerId);
-			MessageHandler.editChampionMessage(user, actualChampion.getRepresentation(), showingMessage);
+			actualChampion = database.getRandomChampion(player.getPlayerId());
+			MessageHandler.editChampionMessage(player.getUser(), actualChampion.getRepresentation(), showingMessage);
 		}
 	}
 	
@@ -68,54 +69,47 @@ public class Instance {
 		IMessage message = event.getMessage();
 		String guess = message.getContent().toLowerCase();
 		
-		if(message.getAuthor().isBot() || !message.getAuthor().getID().equals(playerId) || guess.startsWith(":dc"))
+		if(message.getAuthor().isBot() || !message.getAuthor().getID().equals(player.getPlayerId()) || guess.startsWith(":dc") || !message.getChannel().equals(player.getChannel()))
 			return;	
-		else if(guess.equals("dica")) {
-				if(database.getUsedHints(playerId) < 3) {
-					String hintTitle = String.format(DaoPreferences.getTitle("hint", lang).getText(),user.getName());
-					String hintText = DaoPreferences.getLocal(actualChampion.getName(), lang).getText();
-					MessageHandler.threadedDesctrutiveMessage(hintTitle, hintText, Color.blue, channel, 8000);
-					actualChampion.setUsedHint();
+		else if(guess.equals("dica") && !actualChampion.isCorrect()) {
+				if(database.getUsedHints(player.getPlayerId()) < 3) {
+					new Thread(() -> {useHint();}).start();
 				}else {
 					String noHintText = DaoPreferences.getLocal("noHint", lang).getText();
-					MessageHandler.threadedDesctrutiveMessage("@"+user.getName(), noHintText, Color.ORANGE, channel, 5000);
+					MessageHandler.threadedDesctrutiveMessage("@"+player.getName(), noHintText, Color.ORANGE, player.getChannel(), 5000);
 				}
-		}else if(guess.equals(actualChampion.getName())) {
-			MessageHandler.sendCorrectAnswer(channel, user, lang);
+		}else if(guess.equals(actualChampion.getName()) && !actualChampion.isCorrect()) {
 			progress++;
+			actualChampion.setCorrect();
+			MessageHandler.sendCorrectAnswer(player.getChannel(), player.getUser(), lang);
 			
-			Runnable r = new Runnable() { 
-				public void run() {
-					database.registerCorrectAnswer(playerId, actualChampion.getId(), actualChampion.getUsedHint());
-					showNextChampion();
-				}
-			};
-			
-			Thread t = new Thread(r);
-			t.start();
+			new Thread(()-> {	
+				database.registerCorrectAnswer(player.getPlayerId(), actualChampion.getId(), actualChampion.getUsedHint()); 
+				showNextChampion();
+			}
+			).start();
 		}
 		else if(!guess.equals(actualChampion.getName())) {
-			MessageHandler.sendWrongAnswer(channel, user, lang);
-			System.out.println(message.getContent() + " wtf");
+			MessageHandler.sendWrongAnswer(player.getChannel(), player.getUser(), lang);
 			
-			Runnable r = new Runnable() {
-				public void run() { 
-					database.registerIncorrectGuess(playerId, actualChampion.getId(), actualChampion.getUsedHint());
-				}
-			};
-			
-			Thread t = new Thread(r);
-			t.start();
+			new Thread(()->{
+				database.registerIncorrectGuess(player.getPlayerId(), actualChampion.getId(), actualChampion.getUsedHint());
+			}).start();
 		}
 		
-		try {
-			MessageHandler.deleteMessage(message);
-		} catch (MissingPermissionsException e) {
-			if(!showPermissionWarning){
-				MessageHandler.noPermissions(channel);
-				showPermissionWarning = true;
-			}
-		}
+		new Thread( () -> {
+			try {
+				MessageHandler.deleteMessage(message);
+			} catch (Exception e) {
+				e.printStackTrace();
+		}}).start();
+	}
+	
+	public void useHint(){
+		String hintTitle = String.format(DaoPreferences.getTitle("hint", lang).getText(),player.getName());
+		String hintText = DaoPreferences.getLocal(actualChampion.getName(), lang).getText();
+		MessageHandler.threadedDesctrutiveMessage(hintTitle, hintText, Color.blue, player.getChannel(), 8000);
+		actualChampion.setUsedHint();
 	}
 	
 	public void CompletedGameMessage() {
@@ -124,9 +118,9 @@ public class Instance {
 		} catch (MissingPermissionsException e) {
 			e.printStackTrace();
 		}
-		String completeGameTitle = String.format(DaoPreferences.getTitle("completeGame", lang).getText(), user.getName());
-		String completeGameText = String.format(DaoPreferences.getLocal("completeGame", lang).getText(), database.getTries(playerId));
-		MessageHandler.sendMessage(completeGameTitle, completeGameText, Color.pink, channel);
-		new Callback(new GameReceiver(user, channel), "sair", channel).execute();
+		String completeGameTitle = String.format(DaoPreferences.getTitle("completeGame", lang).getText(), player.getName());
+		String completeGameText = String.format(DaoPreferences.getLocal("completeGame", lang).getText(), DaoPlayer.getTries(player.getPlayerId()));
+		MessageHandler.sendMessage(completeGameTitle, completeGameText, Color.pink, player.getChannel());
+		new Callback(new GameReceiver(player.getUser(), player.getChannel()), "sair", player.getChannel()).execute();
 	}
 }

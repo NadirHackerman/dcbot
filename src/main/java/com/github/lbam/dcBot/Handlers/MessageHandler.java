@@ -2,6 +2,8 @@ package com.github.lbam.dcBot.Handlers;
 
 import java.awt.Color;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import com.github.lbam.dcBot.BotMain;
 import com.github.lbam.dcBot.Database.DAO.DaoPreferences;
 import com.github.lbam.dcBot.Runnables.SelfDestructiveMessage;
@@ -78,14 +80,13 @@ public class MessageHandler {
 	}
 	
 	public static void threadedDesctrutiveMessage(String title, String body, Color color, IChannel ch, int delay) {
-		Thread t = new Thread(new SelfDestructiveMessage(title, body, color, ch, delay));
-		t.start();
+		new Thread(() -> sendDestructiveMessage(title,body,color,ch,delay)).start();
 	}
 	
 	public static void showHelpPanel(IChannel ch){
 		String lang = DaoPreferences.getLang(ch.getGuild().getID());
 		String title = DaoPreferences.getTitle("gWelcome", lang).getText();
-		String text = DaoPreferences.getLocal("gWelcome", lang).getText();
+		String text = StringEscapeUtils.unescapeJava(DaoPreferences.getLocal("gWelcome", lang).getText());
 		MessageHandler.sendMessage(title, text, Color.yellow, ch);
 	}
 	

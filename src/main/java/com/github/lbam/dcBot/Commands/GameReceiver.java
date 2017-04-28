@@ -5,7 +5,9 @@ import java.awt.Color;
 import com.github.lbam.dcBot.BotMain;
 import com.github.lbam.dcBot.Instance;
 import com.github.lbam.dcBot.Database.DAO.DaoChampion;
+import com.github.lbam.dcBot.Database.DAO.DaoPlayer;
 import com.github.lbam.dcBot.Database.DAO.DaoPreferences;
+import com.github.lbam.dcBot.Database.Models.Player;
 import com.github.lbam.dcBot.Handlers.InstanceHandler;
 import com.github.lbam.dcBot.Handlers.MessageHandler;
 
@@ -28,25 +30,22 @@ public class GameReceiver {
 		guildLang = DaoPreferences.getLang(ch.getGuild().getID());
 	}
 	
-	//Checa se o player já está em um jogo, caso contrário, inicia um.
 	public void jogar() {
 		if (!gameExists){
 			InstanceHandler.instances.put(playerId, null);
-			DaoChampion db = new DaoChampion();
-			int playerProgress = db.getProgress(playerId), maxChampion = db.getMaxChampionId()+1;
-			if(playerProgress < maxChampion) {
-				Instance instancia = new Instance(user, ch, db, playerProgress, maxChampion);
+			Player player = new Player(ch.getGuild().getID(), guildLang, ch, user, DaoPlayer.getProgress(playerId));
+			if(player.getProgress() < new DaoChampion().getMaxChampion()) {
+				Instance instancia = new Instance(player);
 				InstanceHandler.instances.put(playerId, instancia);
 				BotMain.Bot.getDispatcher().registerListener(instancia);
 			}else {
-				MessageHandler.sendMessage(String.format(DaoPreferences.getTitle("completeGame", DaoPreferences.getLang(ch.getGuild().getID())).getText(), user.getID()), String.format(DaoPreferences.getLocal("completeGame", DaoPreferences.getLang(ch.getGuild().getID())).getText(), db.getTries(playerId)), Color.pink, ch);
+				MessageHandler.sendMessage(String.format(DaoPreferences.getTitle("completeGame", DaoPreferences.getLang(ch.getGuild().getID())).getText(), user.getID()), String.format(DaoPreferences.getLocal("completeGame", DaoPreferences.getLang(ch.getGuild().getID())).getText(), DaoPlayer.getTries(playerId)), Color.pink, ch);
 			}
 		}else {
 			MessageHandler.sendIngameError(ch);
 			}
 	}
 	
-	//Checa se existe um jogo em nome do player, caso exista, exclui.
 	public void sair() {
 		if(gameExists) {
 			BotMain.Bot.getDispatcher().unregisterListener(InstanceHandler.instances.get(playerId));

@@ -16,7 +16,6 @@ public class BotMain{
 	public static IDiscordClient Bot;
 	
     public static void main(String[] args) throws IOException, DiscordException{
-    	
     	Bot = getClient(System.getenv("TOKEN"));
     	Bot.getDispatcher().registerListener(new EventHandler());
     }

@@ -1,10 +1,13 @@
-# Descubra o campeão
->Divirta-se em seu servidor Discord tentando adivinhar qual campeão do jogo League of Legends o bot quis representar utilizando os emojis padrões do aplicativo.
-### Comandos:
-* _%dc jogar_ - **inicia o jogo**
-* _%dc sair_ - **encerra o jogo**
-* _%dc dica_ - **te dá uma dica sobre o campeão que você está.**
-* _%dc ajuda_ - **mostra a lista de comandos**
-#### Ajude a manter o servidor vivo:
-* **Paypal:**
+# Who is that champion? (Descubra o Campeão)
+![License MIT](https://opensource.org/licenses/MIT)
+![Server is UP](https://img.shields.io/uptimerobot/status/m778918918-3e92c097147760ee39d02d36.svg)
+>A bot made with Discord4j library. Guess the League of Legends' champions from emojis representations.
 
+## Contributions:
+*If you're interested to help me with the development, by either improving or fixing the bot, please talk to me on Discord(Luke#7360) or create an issue with your ideas and bug reports.
+*Documentation (WIP)
+
+### Commands:
+* _%dc jogar (play)_ - **Starts the game**
+* _%dc sair (quit)_ - **Finishes a game**
+* _%dc ajuda (help)_ - **Shows the command dialog**
