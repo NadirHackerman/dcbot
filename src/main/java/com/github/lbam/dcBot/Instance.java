@@ -71,7 +71,7 @@ public class Instance {
 		
 		if(message.getAuthor().isBot() || !message.getAuthor().getID().equals(player.getPlayerId()) || guess.startsWith(":dc") || !message.getChannel().equals(player.getChannel()))
 			return;	
-		else if(guess.equals("dica")) {
+		else if(guess.equals("dica") && !actualChampion.isCorrect()) {
 				if(database.getUsedHints(player.getPlayerId()) < 3) {
 					new Thread(() -> {useHint();}).start();
 				}else {
