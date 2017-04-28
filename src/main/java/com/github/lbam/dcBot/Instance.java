@@ -79,15 +79,14 @@ public class Instance {
 					MessageHandler.threadedDesctrutiveMessage("@"+player.getName(), noHintText, Color.ORANGE, player.getChannel(), 5000);
 				}
 		}else if(guess.equals(actualChampion.getName())) {
-			MessageHandler.sendCorrectAnswer(player.getChannel(), player.getUser(), lang);
 			progress++;
-
-			new Thread( () -> {database.registerCorrectAnswer(player.getPlayerId(), actualChampion.getId(), actualChampion.getUsedHint()); 
-								showNextChampion();}).start();
+			MessageHandler.sendCorrectAnswer(player.getChannel(), player.getUser(), lang);
+			database.registerCorrectAnswer(player.getPlayerId(), actualChampion.getId(), actualChampion.getUsedHint()); 
+			showNextChampion();
 		}
 		else if(!guess.equals(actualChampion.getName())) {
 			MessageHandler.sendWrongAnswer(player.getChannel(), player.getUser(), lang);
-			new Thread( () -> {database.registerIncorrectGuess(player.getPlayerId(), actualChampion.getId(), actualChampion.getUsedHint());} ).start();
+			database.registerIncorrectGuess(player.getPlayerId(), actualChampion.getId(), actualChampion.getUsedHint());
 		}
 		
 
