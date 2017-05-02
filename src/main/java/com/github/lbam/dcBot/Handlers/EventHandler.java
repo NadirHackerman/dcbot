@@ -22,13 +22,15 @@ public class EventHandler {
 	public void onGuildCreateEvent(GuildCreateEvent event) {
 		IGuild server = event.getGuild();
 		String serverRegion = server.getRegion().getName();
+		boolean registered = DaoPreferences.existeRegistro(server.getID());
 		
-		if(!DaoPreferences.existeRegistro(server.getID())){
-			if(serverRegion.equals("Brazil")){
-				DaoPreferences.createPreferences(server.getID(), "br");
-			}else{
-				DaoPreferences.createPreferences(server.getID(), "us");
-			}
+		if(registered)
+			return;
+		
+		if(serverRegion.equals("Brazil")){
+			DaoPreferences.createPreferences(server.getID(), "br");
+		}else{
+			DaoPreferences.createPreferences(server.getID(), "us");
 		}
 		
 		for(IChannel ch : server.getChannels()) {
@@ -36,6 +38,7 @@ public class EventHandler {
 		}
 		
 	}
+	
 	@EventSubscriber
 	public void onMessageEvent(MessageReceivedEvent event){
 		IMessage message = event.getMessage();

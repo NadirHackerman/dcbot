@@ -6,8 +6,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.github.lbam.dcBot.BotMain;
 import com.github.lbam.dcBot.Database.DAO.DaoPreferences;
-import com.github.lbam.dcBot.Runnables.SelfDestructiveMessage;
-
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
@@ -17,6 +15,7 @@ import sx.blah.discord.util.EmbedBuilder;
 import sx.blah.discord.util.MessageBuilder;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
+import sx.blah.discord.util.RequestBuffer;
 
 
 public class MessageHandler {
@@ -41,14 +40,20 @@ public class MessageHandler {
 	
 	public static IMessage sendDestructiveMessage(String title, String body, Color color, IChannel ch, int delay) {
 		EmbedObject eb = new EmbedBuilder().withColor(color).withTitle(title).withDesc(body).build();
-		try {
-			IMessage m = new MessageBuilder(BotMain.Bot).withChannel(ch).withEmbed(eb).build();
-			Thread.sleep(delay);
-			m.delete();
-			return m;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		RequestBuffer.request(()-> {
+			try {
+				IMessage m = new MessageBuilder(BotMain.Bot).withChannel(ch).withEmbed(eb).build();
+				Thread.sleep(delay);
+				m.delete();
+				return m;
+			} catch (RateLimitException e) {
+				e.printStackTrace();
+				throw e;
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+			return null;
+		});
 		return null;
 	}
 	
