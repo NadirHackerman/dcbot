@@ -24,36 +24,39 @@ public class EventHandler {
 	@EventSubscriber
 	public void onGuildCreateEvent(GuildCreateEvent event) {
 		IGuild server = event.getGuild();
-		String serverRegion = server.getRegion().getName();
-		boolean registered = DaoPreferences.existeRegistro(server.getID());
 		
-		if(registered)
-			return;
+		for(IChannel ch : server.getChannels()) {
+			MessageHandler.showHelpPanel(ch);
+		}
+	}
+	
+	public void register(IGuild server){
+		String serverRegion = server.getRegion().getName();
 		
 		if(serverRegion.equals("Brazil")){
 			DaoPreferences.createPreferences(server.getID(), "br");
 		}else{
 			DaoPreferences.createPreferences(server.getID(), "us");
 		}
-		
-		for(IChannel ch : server.getChannels()) {
-			MessageHandler.showHelpPanel(ch);
-		}
-		
 	}
 	
 	@EventSubscriber
 	public void onMessageEvent(MessageReceivedEvent event){
 		IMessage message = event.getMessage();
 		String[] args = message.getContent().split(" ");
-	
+		IGuild server = message.getChannel().getGuild();
+		
 		if(message.getAuthor().isBot())
 			return;
 
 		if(args[0].equals(":dc") && args.length > 1) {
-			if(!changeLogged.contains(message.getChannel().getGuild().getID())){
+			if(!changeLogged.contains(server.getID())){
 				MessageHandler.threadedDesctrutiveMessage("Changelog", "-Bard fixed\n -Tahm Kench fixed\n -Now you can skip the actual champion by typing ':dc skip' while playing. *(Agora você pode pular um campeão digitando :dc pular enquanto em jogo).*", Color.WHITE, message.getChannel(), 20000);
-				changeLogged.add(message.getChannel().getGuild().getID());
+				changeLogged.add(server.getID());
+			}
+			
+			if(!DaoPreferences.existeRegistro(server.getID())){
+				register(server);
 			}
 			
 			Command cmd = new Callback(new GameReceiver(message.getAuthor(),message.getChannel()), args[1], message.getChannel());

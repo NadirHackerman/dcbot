@@ -32,6 +32,7 @@ public class Instance {
 		lang = player.getLang();
 		progress = player.getProgress();
 		
+		showingMessage = MessageHandler.sendMessage("Who is that champion?", "Loading...", Color.black, player.getChannel());
 		database = new DaoChampion();
 		maxChampion = database.getMaxChampion();
 		
@@ -42,8 +43,6 @@ public class Instance {
 		}
 		
 		showStartText();
-		
-		showingMessage = MessageHandler.sendMessage("Descubra o campeão", "Moldando respostas...", Color.black, player.getChannel());
 		showNextChampion();
 	}
 	
@@ -74,6 +73,8 @@ public class Instance {
 			actualChampion.isCorrect();
 			canSkip = false;
 			showNextChampion();
+		}else{
+			MessageHandler.sendMessage("Wait a second before skipping again.", player.getChannel());
 		}
 	}
 	
