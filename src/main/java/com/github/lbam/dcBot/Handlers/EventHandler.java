@@ -23,11 +23,11 @@ public class EventHandler {
 	
 	@EventSubscriber
 	public void onGuildCreateEvent(GuildCreateEvent event) {
-		IGuild server = event.getGuild();
-		
-		for(IChannel ch : server.getChannels()) {
-			MessageHandler.showHelpPanel(ch);
-		}
+//		IGuild server = event.getGuild();
+//		
+//		for(IChannel ch : server.getChannels()) {
+//			MessageHandler.showHelpPanel(ch);
+//		}
 	}
 	
 	public void register(IGuild server){
