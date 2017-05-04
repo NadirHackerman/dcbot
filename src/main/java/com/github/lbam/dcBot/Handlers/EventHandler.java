@@ -51,7 +51,7 @@ public class EventHandler {
 
 		if(args[0].equals(":dc") && args.length > 1) {
 			if(!changeLogged.contains(server.getID())){
-				MessageHandler.threadedDesctrutiveMessage("Changelog", "-Bard fixed\n -Tahm Kench fixed\n -Now you can skip the actual champion by typing ':dc skip' while playing. *(Agora você pode pular um campeão digitando :dc pular enquanto em jogo).*", Color.WHITE, message.getChannel(), 20000);
+				MessageHandler.sendMessage("Changelog", "-Bard fixed\n -Tahm Kench fixed\n -Now you can skip the actual champion by typing ':dc skip' while playing. *(Agora você pode pular um campeão digitando :dc pular enquanto em jogo).*", Color.WHITE, message.getChannel());
 				changeLogged.add(server.getID());
 			}
 			
