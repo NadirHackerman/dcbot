@@ -46,6 +46,12 @@ public class GameReceiver {
 			}
 	}
 	
+	public void pular(){
+		if(gameExists){
+			InstanceHandler.instances.get(playerId).skipChampion();
+		}
+	}
+	
 	public void sair() {
 		if(gameExists) {
 			BotMain.Bot.getDispatcher().unregisterListener(InstanceHandler.instances.get(playerId));
@@ -72,6 +78,10 @@ public class GameReceiver {
 	
 	public void help(){
 		ajuda();
+	}
+	
+	public void skip(){
+		pular();
 	}
 	
 	

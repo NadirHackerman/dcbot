@@ -60,8 +60,17 @@ public class Instance {
 			CompletedGameMessage();
 		}else {
 			actualChampion = database.getRandomChampion(player.getPlayerId());
+			
+			if(actualChampion.getName().equals("bard") && lang.equals("br"))
+				actualChampion.setName("bardo");
+			
 			MessageHandler.editChampionMessage(player.getUser(), actualChampion.getRepresentation(), showingMessage);
 		}
+	}
+	
+	public void skipChampion(){
+		actualChampion.isCorrect();
+		showNextChampion();
 	}
 	
 	@EventSubscriber
@@ -104,7 +113,7 @@ public class Instance {
 				e.printStackTrace();
 		}}).start();
 	}
-	
+
 	public void useHint(){
 		String hintTitle = String.format(DaoPreferences.getTitle("hint", lang).getText(),player.getName());
 		String hintText = DaoPreferences.getLocal(actualChampion.getName(), lang).getText();
@@ -123,4 +132,6 @@ public class Instance {
 		MessageHandler.sendMessage(completeGameTitle, completeGameText, Color.pink, player.getChannel());
 		new Callback(new GameReceiver(player.getUser(), player.getChannel()), "sair", player.getChannel()).execute();
 	}
+	
+
 }
