@@ -24,7 +24,7 @@ public class Instance {
 	DaoChampion database;
 	int progress, maxChampion;
 	
-	boolean showPermissionWarning = false;
+	boolean showPermissionWarning = false, canSkip = true;
 	IMessage showingMessage;
 	
 	public Instance(Player player) {
@@ -32,6 +32,7 @@ public class Instance {
 		lang = player.getLang();
 		progress = player.getProgress();
 		
+		showingMessage = MessageHandler.sendMessage("Who is that champion?", "Loading...", Color.black, player.getChannel());
 		database = new DaoChampion();
 		maxChampion = database.getMaxChampion();
 		
@@ -42,8 +43,6 @@ public class Instance {
 		}
 		
 		showStartText();
-		
-		showingMessage = MessageHandler.sendMessage("Descubra o campeão", "Moldando respostas...", Color.black, player.getChannel());
 		showNextChampion();
 	}
 	
@@ -60,8 +59,42 @@ public class Instance {
 			CompletedGameMessage();
 		}else {
 			actualChampion = database.getRandomChampion(player.getPlayerId());
+			
+			if(actualChampion.getName().equals("bard") && lang.equals("br"))
+				actualChampion.setName("bardo");
+			
 			MessageHandler.editChampionMessage(player.getUser(), actualChampion.getRepresentation(), showingMessage);
+			canSkip = true;
 		}
+	}
+	
+	public void skipChampion(){
+		if(canSkip){
+			actualChampion.isCorrect();
+			canSkip = false;
+			showNextChampion();
+		}else{
+			MessageHandler.sendMessage("Wait a second before skipping again.", player.getChannel());
+		}
+	}
+	
+	public void useHint(){
+		String hintTitle = String.format(DaoPreferences.getTitle("hint", lang).getText(),player.getName());
+		String hintText = DaoPreferences.getLocal(actualChampion.getName(), lang).getText();
+		MessageHandler.threadedDesctrutiveMessage(hintTitle, hintText, Color.blue, player.getChannel(), 8000);
+		actualChampion.setUsedHint();
+	}
+	
+	public void CompletedGameMessage() {
+		try {
+			MessageHandler.deleteMessage(showingMessage);
+		} catch (MissingPermissionsException e) {
+			e.printStackTrace();
+		}
+		String completeGameTitle = String.format(DaoPreferences.getTitle("completeGame", lang).getText(), player.getName());
+		String completeGameText = String.format(DaoPreferences.getLocal("completeGame", lang).getText(), DaoPlayer.getTries(player.getPlayerId()));
+		MessageHandler.sendMessage(completeGameTitle, completeGameText, Color.pink, player.getChannel());
+		new Callback(new GameReceiver(player.getUser(), player.getChannel()), "sair", player.getChannel()).execute();
 	}
 	
 	@EventSubscriber
@@ -105,22 +138,5 @@ public class Instance {
 		}}).start();
 	}
 	
-	public void useHint(){
-		String hintTitle = String.format(DaoPreferences.getTitle("hint", lang).getText(),player.getName());
-		String hintText = DaoPreferences.getLocal(actualChampion.getName(), lang).getText();
-		MessageHandler.threadedDesctrutiveMessage(hintTitle, hintText, Color.blue, player.getChannel(), 8000);
-		actualChampion.setUsedHint();
-	}
-	
-	public void CompletedGameMessage() {
-		try {
-			MessageHandler.deleteMessage(showingMessage);
-		} catch (MissingPermissionsException e) {
-			e.printStackTrace();
-		}
-		String completeGameTitle = String.format(DaoPreferences.getTitle("completeGame", lang).getText(), player.getName());
-		String completeGameText = String.format(DaoPreferences.getLocal("completeGame", lang).getText(), DaoPlayer.getTries(player.getPlayerId()));
-		MessageHandler.sendMessage(completeGameTitle, completeGameText, Color.pink, player.getChannel());
-		new Callback(new GameReceiver(player.getUser(), player.getChannel()), "sair", player.getChannel()).execute();
-	}
+
 }

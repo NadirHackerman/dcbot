@@ -39,11 +39,17 @@ public class GameReceiver {
 				InstanceHandler.instances.put(playerId, instancia);
 				BotMain.Bot.getDispatcher().registerListener(instancia);
 			}else {
-				MessageHandler.sendMessage(String.format(DaoPreferences.getTitle("completeGame", DaoPreferences.getLang(ch.getGuild().getID())).getText(), user.getID()), String.format(DaoPreferences.getLocal("completeGame", DaoPreferences.getLang(ch.getGuild().getID())).getText(), DaoPlayer.getTries(playerId)), Color.pink, ch);
+				MessageHandler.sendMessage(String.format(DaoPreferences.getTitle("completeGame", DaoPreferences.getLang(ch.getGuild().getID())).getText(), user.getName()), String.format(DaoPreferences.getLocal("completeGame", DaoPreferences.getLang(ch.getGuild().getID())).getText(), DaoPlayer.getTries(playerId)), Color.pink, ch);
 			}
 		}else {
 			MessageHandler.sendIngameError(ch);
 			}
+	}
+	
+	public void pular(){
+		if(gameExists){
+			InstanceHandler.instances.get(playerId).skipChampion();
+		}
 	}
 	
 	public void sair() {
@@ -72,6 +78,10 @@ public class GameReceiver {
 	
 	public void help(){
 		ajuda();
+	}
+	
+	public void skip(){
+		pular();
 	}
 	
 	
