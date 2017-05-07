@@ -11,4 +11,4 @@
 * _%dc jogar (play)_ - **Starts the game**
 * _%dc sair (quit)_ - **Finishes a game**
 * _%dc ajuda (help)_ - **Shows the command dialog**
-* _%dc skip (pular_ - **Skips a champion**
+* _%dc skip (pular)_ - **Skips a champion**
