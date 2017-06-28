@@ -16,6 +16,7 @@ import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.util.MissingPermissionsException;
 
+//
 public class Instance {
 	Player player;
 	Champion actualChampion;
