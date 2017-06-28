@@ -73,7 +73,7 @@ public class Instance {
 		if(canSkip){
 			actualChampion.setCorrect();
 			canSkip = false;
-			MessageHandler.threadedDesctrutiveMessage("Wait until we search for another champion...", "", Color.lightGray, player.getChannel(), 10000);
+			MessageHandler.threadedDesctrutiveMessage("Wait until we search for another champion...", "", Color.lightGray, player.getChannel(), 1500);
 			actualChampion = database.getRandomChampionSkip(player.getPlayerId(), actualChampion.getId());
 			if(actualChampion == null){
 				MessageHandler.threadedDesctrutiveMessage("Looks like you have only one champion left...", "You can't skip!", Color.ORANGE, player.getChannel(), 10000);
