@@ -153,4 +153,40 @@ public class DaoChampion {
 			e.printStackTrace();
 		}
 	}
+
+	public Champion getRandomChampionSkip(String idPlayer, int idChampion) {
+		connect();
+		ResultSet rs = null;
+		PreparedStatement cmd = null;
+		try {
+			cmd =  con.prepareStatement("SELECT * "
+							+ "FROM champions "
+							+ "WHERE id NOT IN"
+							+ "(SELECT idChampion "
+							+ "FROM progresso "
+							+ "WHERE status = 1 "
+							+ "AND idPlayer = ? "
+							+ "UNION SELECT id FROM champions WHERE id = ?) "
+							+ "ORDER BY RAND() LIMIT 1");
+			cmd.setString(1, idPlayer);
+			cmd.setInt(2, idChampion);
+			
+			rs = cmd.executeQuery();
+			Champion c = null;
+			
+			if(rs.isBeforeFirst()){
+				rs.next();
+				c = new Champion(
+				rs.getInt("id"), rs.getString("name"), 
+				rs.getString("representation"));
+			}
+			
+			return c;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}finally {
+			close(cmd);
+		}
+	}
 }

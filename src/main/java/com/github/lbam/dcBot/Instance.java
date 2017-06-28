@@ -59,21 +59,29 @@ public class Instance {
 			CompletedGameMessage();
 		}else {
 			actualChampion = database.getRandomChampion(player.getPlayerId());
-			
-			if(actualChampion.getName().equals("bard") && lang.equals("br"))
-				actualChampion.setName("bardo");
-			
+			checkBard();
 			MessageHandler.editChampionMessage(player.getUser(), actualChampion.getRepresentation(), showingMessage);
-			canSkip = true;
 		}
+	}
+	
+	public void checkBard(){
+		if(actualChampion.getName().equals("bard") && lang.equals("br"))
+			actualChampion.setName("bardo");
 	}
 	
 	public void skipChampion(){
 		if(canSkip){
 			actualChampion.isCorrect();
 			canSkip = false;
-			showNextChampion();
-		}else{
+			actualChampion = database.getRandomChampionSkip(player.getPlayerId(), actualChampion.getId());
+			if(actualChampion == null){
+				MessageHandler.threadedDesctrutiveMessage("You have only one champion left.", "You can't skip!", Color.ORANGE, player.getChannel(), 10000);
+			} else {
+				checkBard();
+				MessageHandler.editChampionMessage(player.getUser(), actualChampion.getRepresentation(), showingMessage);
+				canSkip = true;
+			}
+		} else{
 			MessageHandler.sendMessage("Wait a second before skipping again.", player.getChannel());
 		}
 	}
