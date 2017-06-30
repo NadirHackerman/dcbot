@@ -40,6 +40,7 @@ public class GameReceiver {
 				BotMain.Bot.getDispatcher().registerListener(instancia);
 			}else {
 				MessageHandler.sendMessage(String.format(DaoPreferences.getTitle("completeGame", DaoPreferences.getLang(ch.getGuild().getID())).getText(), user.getName()), String.format(DaoPreferences.getLocal("completeGame", DaoPreferences.getLang(ch.getGuild().getID())).getText(), DaoPlayer.getTries(playerId)), Color.pink, ch);
+				InstanceHandler.instances.remove(playerId);
 			}
 		}else {
 			MessageHandler.sendIngameError(ch);
