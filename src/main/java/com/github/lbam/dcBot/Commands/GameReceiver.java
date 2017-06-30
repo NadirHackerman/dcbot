@@ -34,16 +34,12 @@ public class GameReceiver {
 		if (!gameExists){
 			InstanceHandler.instances.put(playerId, null);
 			Player player = new Player(ch.getGuild().getID(), guildLang, ch, user, DaoPlayer.getProgress(playerId));
-			if(player.getProgress() < new DaoChampion().getMaxChampion()) {
-				Instance instancia = new Instance(player);
-				InstanceHandler.instances.put(playerId, instancia);
-				BotMain.Bot.getDispatcher().registerListener(instancia);
-			}else {
-				MessageHandler.sendMessage(String.format(DaoPreferences.getTitle("completeGame", DaoPreferences.getLang(ch.getGuild().getID())).getText(), user.getName()), String.format(DaoPreferences.getLocal("completeGame", DaoPreferences.getLang(ch.getGuild().getID())).getText(), DaoPlayer.getTries(playerId)), Color.pink, ch);
-			}
-		}else {
+			Instance instancia = new Instance(player);
+			InstanceHandler.instances.put(playerId, instancia);
+			BotMain.Bot.getDispatcher().registerListener(instancia);
+		} else {
 			MessageHandler.sendIngameError(ch);
-			}
+		}
 	}
 	
 	public void pular(){
