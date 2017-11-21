@@ -1,5 +1,7 @@
 package com.github.lbam.dcBot;
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 import com.github.lbam.dcBot.Handlers.EventHandler;
 
@@ -16,8 +18,13 @@ public class BotMain{
 	public static IDiscordClient Bot;
 	
     public static void main(String[] args) throws IOException, DiscordException{
-    	Bot = getClient(System.getenv("TOKEN"));
-    	Bot.getDispatcher().registerListener(new EventHandler());
+        Bot = getClient(System.getenv("TOKEN"));
+        Bot.getDispatcher().registerListener(new EventHandler());
+
+        ServerSocket myServerSocket = new ServerSocket(43594);
+        while (true) {
+            Socket skt = myServerSocket.accept();
+        }
     }
     
     public static IDiscordClient getClient(String Token) throws DiscordException{
